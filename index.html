@@ -44,6 +44,36 @@
     .locked { background-color: red; cursor: not-allowed; }
     .open   { background-color: blue; }
     .done   { background-color: green; }
+
+    .quiz-row {
+  display: flex;
+  gap: 20px; /* space between columns */
+}
+.quiz-col {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.quiz-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;           /* space between question text and input */
+  margin-bottom: 4px; /* space between rows */
+}
+
+.quiz-question {
+  min-width: 70px;    /* enough for '10 · 12 =' etc. */
+  text-align: right;
+    display: inline-block; /* ensures consistent width */
+}
+
+.quiz-input {
+  width: 40px;        /* space for up to 3 digits */
+  padding: 4px;
+  font-size: 14px;
+}
+
   </style>
 
   <!-- SweetAlert2 -->
@@ -154,42 +184,111 @@ function saveProgress() {
   localStorage.setItem('levelProgress', JSON.stringify(progress));
 }
 
+function generateMultiplicationQuestions(levelNum) {
+  const questions = [];
+  let startTable, endTable;
 
+  if (levelNum === 1) {
+    startTable = 1; endTable = 6;
+  } else if (levelNum === 2) {
+    startTable = 7; endTable = 12;
+  } else {
+    // fallback: levelNum tables starting at 1
+    startTable = 1; endTable = 6;
+  }
 
-    function startQuiz() {
-      const levelNumber = levels[currentLevel].innerText;
+  for (let i = startTable; i <= endTable; i++) {
+    for (let j = 0; j <= 10; j++) {
+      questions.push({
+        q: `${j} · ${i} = ?`,
+        a: (i * j).toString()
+      });
+    }
+  }
 
-let questions = (questionsByLevel[currentLevel] && questionsByLevel[currentLevel].length > 0) 
-                ? questionsByLevel[currentLevel].slice()
-                : defaultQuestionBank.slice();
+  return questions;
+}
+
+function startQuiz() {
+  const levelNumber = currentLevel + 1; // 1-indexed
+
+  // Generate questions per level
+  function generateMultiplicationQuestions(levelNum) {
+    const questions = [];
+    let startTable, endTable;
+
+    if (levelNum === 1) {
+      startTable = 1; endTable = 6;
+    } else if (levelNum === 2) {
+      startTable = 7; endTable = 12;
+    } else {
+      startTable = 1; endTable = 6; // fallback
+    }
+
+    for (let i = startTable; i <= endTable; i++) {
+      for (let j = 0; j <= 10; j++) {
+        questions.push({ q: `${j} · ${i} = ?`, a: (i * j).toString() });
+      }
+    }
+    return questions;
+  }
+
+  let questions = generateMultiplicationQuestions(levelNumber);
 
   // optionally shuffle
-  if (RANDOMIZE_QUESTIONS) {
-    questions.sort(() => 0.5 - Math.random()); // shuffle
+  if (RANDOMIZE_QUESTIONS) questions.sort(() => 0.5 - Math.random());
+
+  // Build multi-column HTML
+  function buildQuizHTML(questions, tablesPerRow = 3) {
+    // Group by table number
+    const tables = {};
+    questions.forEach(q => {
+      const tableNum = parseInt(q.q.split('·')[1].trim());
+      if (!tables[tableNum]) tables[tableNum] = [];
+      tables[tableNum].push(q);
+    });
+
+    const tableNums = Object.keys(tables).map(Number).sort((a,b) => a-b);
+
+    let html = '<div class="quiz-grid">';
+    for (let i = 0; i < tableNums.length; i += tablesPerRow) {
+      html += '<div class="quiz-row">';
+      const group = tableNums.slice(i, i + tablesPerRow);
+      group.forEach(tNum => {
+        html += '<div class="quiz-col">';
+       tables[tNum].forEach(q => {
+  html += `
+    <div class="quiz-item">
+      <span class="quiz-question">${q.q.replace('?', '')}</span>
+      <input type="text" name="q${q.q}" data-answer="${q.a}" class="quiz-input" required>
+    </div>
+  `;
+});
+
+        html += '</div>'; // end quiz-col
+      });
+      html += '</div><br>'; // end row + space
+    }
+    html += '</div>';
+    return html;
   }
-  // pick up to 4 questions (or fewer if less available)
-  const numQ = Math.min(4, questions.length);
-  const selected = questions.slice(0, numQ);
 
-  // build the form HTML
-  let formHtml = "<form id='quizForm'>";
-  selected.forEach((q, i) => {
-    formHtml += `
-      <label>${q.q}</label><br>
-      <input type="text" name="q${i}" data-answer="${q.a}" class="swal2-input" required><br>
-    `;
-  });
-  formHtml += "</form>";
+  const quizHTML = buildQuizHTML(questions, 3);
 
-      // Show quiz popup
-      Swal.fire({
-        title: `Nivå ${levelNumber}`,
-        html: formHtml,
-        focusConfirm: false,
-        showCancelButton: true,
-        confirmButtonText: "Rätta",
-        cancelButtonText: 'Avbryt',
- // preConfirm returns the fraction of correct answers
+  // Show SweetAlert2 quiz popup
+  Swal.fire({
+    title: `Nivå ${levelNumber}`,
+    html: quizHTML,
+    focusConfirm: false,
+    showCancelButton: true,
+    confirmButtonText: "Rätta",
+    cancelButtonText: 'Avbryt',
+
+      width: '70%',           // wider than default
+  customClass: {
+    popup: 'quiz-popup'
+  },
+
     preConfirm: () => {
       const inputs = Swal.getHtmlContainer().querySelectorAll("input[data-answer]");
       let correct = 0;
@@ -198,18 +297,19 @@ let questions = (questionsByLevel[currentLevel] && questionsByLevel[currentLevel
       });
       return correct / inputs.length;
     }
-      }).then(result => {
-        if (result.isConfirmed) {
-          const score = result.value;
-          if (score >= 0.75) {
-            Swal.fire("Snyggt jobbat!", "Du har låst upp en ny nivå.", "success");
+  }).then(result => {
+    if (result.isConfirmed) {
+      const score = result.value;
+      if (score >= 0.75) {
+        Swal.fire("Snyggt jobbat!", "Du har låst upp en ny nivå.", "success");
         completeLevel(currentLevel);
-          } else {
-            Swal.fire("Testa igen!", "Inte riktigt där än.", "question");
-          }
-        }
-      });
+      } else {
+        Swal.fire("Testa igen!", "Inte riktigt där än.", "question");
+      }
     }
+  });
+}
+
 
 // Cheat: fill answers when a key combo is pressed
 (function() {
@@ -217,20 +317,45 @@ let questions = (questionsByLevel[currentLevel] && questionsByLevel[currentLevel
   let buffer = [];
 
   function doCheatFill() {
-    const container = Swal.getHtmlContainer?.();
-    if (!container) return;
-
-    const inputs = container.querySelectorAll('input[data-answer]');
-    if (!inputs || inputs.length === 0) return;
-
-    inputs.forEach(inp => {
-      inp.value = inp.dataset.answer ?? '';
-      inp.style.backgroundColor = '#c8f7c5'; // green highlight
-      inp.dispatchEvent(new Event('input', { bubbles: true }));
-    });
-
+  const container = Swal.getHtmlContainer?.();
+  if (!container) {
+    console.log('No quiz popup is open.');
+    return;
   }
 
+  const inputs = container.querySelectorAll('input[data-answer]');
+  if (!inputs.length) {
+    console.log('No quiz inputs found.');
+    return;
+  }
+
+  inputs.forEach(inp => {
+    inp.value = inp.dataset.answer;        // fill correct answer
+    inp.style.backgroundColor = '#c8f7c5'; // highlight in light green
+    inp.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+}
+ // Add the Cheat button dynamically
+    const cheatBtn = document.createElement('button');
+    cheatBtn.innerText = 'Cheat';
+    cheatBtn.style = `
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      padding: 6px 12px;
+      background: orange;
+      color: black;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      z-index: 9999;
+    `;
+    cheatBtn.addEventListener('click', (e) => {
+      e.stopPropagation(); // prevent SweetAlert2 from closing the popup
+      doCheatFill();
+    });
+    document.body.appendChild(cheatBtn);
+    
   // Capture key sequence
   window.addEventListener('keydown', function(e) {
     const keyId = e.code || ('Key' + (e.key || '').toUpperCase());
@@ -251,6 +376,7 @@ let questions = (questionsByLevel[currentLevel] && questionsByLevel[currentLevel
 
   </script>
 <button onclick="localStorage.removeItem('levelProgress'); location.reload();" style="position:fixed; bottom:10px; right:10px;">Reset Progress</button>
+
 
 </body>
 </html>
