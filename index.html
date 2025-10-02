@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Map Levels with SweetAlert2</title>
+  <title>Maths gamification</title>
   <style>
     body {
       margin: 0;
@@ -58,24 +58,54 @@
     <div id="level1" class="level open" style="top: 6.6%; left: 23.9%;">1</div>
     <div id="level2" class="level locked" style="top: 6.6%; left: 51.7%;">2</div>
     <div id="level3" class="level locked" style="top: 6.6%; left: 66.1%;">3</div>
-    <div id="level3" class="level locked" style="top: 26.7%; left: 66.2%;">4</div>
-    <div id="level3" class="level locked" style="top: 86.1%; left: 24%;">5</div>
-    <div id="level3" class="level locked" style="top: 86.1%; left: 51.8%;">6</div>
-    <div id="level3" class="level locked" style="top: 71.4%; left: 76.8%;">7</div>
+    <div id="level4" class="level locked" style="top: 26.7%; left: 66.2%;">4</div>
+    <div id="level5" class="level locked" style="top: 86.1%; left: 24%;">5</div>
+    <div id="level6" class="level locked" style="top: 86.1%; left: 51.8%;">6</div>
+    <div id="level7" class="level locked" style="top: 71.4%; left: 78%;">7</div>
 
   </div>
 
   <script>
     const levels = document.querySelectorAll('.level');
     let currentLevel = null;
+    // Toggle: set true to shuffle questions for each level, false to keep original order
+    const RANDOMIZE_QUESTIONS = false;
 
-    // Example question bank
-    const questionBank = [
-      { q: "5 + 3 = ?", a: "8" },
-      { q: "10 - 4 = ?", a: "6" },
-      { q: "3 × 3 = ?", a: "9" },
-      { q: "12 ÷ 4 = ?", a: "3" }
-    ];
+    const questionsByLevel = [
+  [ // Level 1
+    { q: "5 + 3 = ?", a: "8" },
+    { q: "2 + 6 = ?", a: "8" },
+    { q: "4 + 4 = ?", a: "8" },
+    { q: "1 + 7 = ?", a: "8" }
+  ],
+  [ // Level 2
+    { q: "10 - 4 = ?", a: "6" },
+    { q: "12 - 5 = ?", a: "7" },
+    { q: "9 - 3 = ?", a: "6" },
+    { q: "8 - 2 = ?", a: "6" }
+  ],
+  [ // Level 3
+    { q: "3 × 3 = ?", a: "9" },
+    { q: "4 × 2 = ?", a: "8" },
+    { q: "5 × 2 = ?", a: "10" },
+    { q: "6 × 1 = ?", a: "6" }
+  ]
+];
+
+// Optional fallback if a level has no questions
+const defaultQuestionBank = [
+  { q: "5 + 3 = ?", a: "8" },
+  { q: "10 - 4 = ?", a: "6" },
+  { q: "3 × 3 = ?", a: "9" }
+];
+
+function shuffleArray(arr) {
+  // in-place shuffle
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
 
     // Attach click listeners
     levels.forEach((lvl, idx) => {
@@ -87,53 +117,111 @@
       });
     });
 
-    function startQuiz() {
-      // Pick 4 random questions
-      const selected = questionBank.sort(() => 0.5 - Math.random()).slice(0, 4);
+function completeLevel(idx) {
+  levels[idx].classList.remove('open');
+  levels[idx].classList.add('done');
 
-      // Build quiz HTML
-      let formHtml = "<form id='quizForm'>";
-      selected.forEach((q, i) => {
-        formHtml += `
-          <label>${q.q}</label><br>
-          <input type="text" name="q${i}" data-answer="${q.a}" class="swal2-input" required><br>
-        `;
-      });
-      formHtml += "</form>";
+  // unlock next
+  if (levels[idx + 1]) {
+    levels[idx + 1].classList.remove('locked');
+    levels[idx + 1].classList.add('open');
+  }
+}
+
+
+    function startQuiz() {
+      const levelNumber = levels[currentLevel].innerText;
+
+let questions = (questionsByLevel[currentLevel] && questionsByLevel[currentLevel].length > 0) 
+                ? questionsByLevel[currentLevel].slice()
+                : defaultQuestionBank.slice();
+
+  // optionally shuffle
+  if (RANDOMIZE_QUESTIONS) {
+    questions.sort(() => 0.5 - Math.random()); // shuffle
+  }
+  // pick up to 4 questions (or fewer if less available)
+  const numQ = Math.min(4, questions.length);
+  const selected = questions.slice(0, numQ);
+
+  // build the form HTML
+  let formHtml = "<form id='quizForm'>";
+  selected.forEach((q, i) => {
+    formHtml += `
+      <label>${q.q}</label><br>
+      <input type="text" name="q${i}" data-answer="${q.a}" class="swal2-input" required><br>
+    `;
+  });
+  formHtml += "</form>";
 
       // Show quiz popup
       Swal.fire({
-        title: "Math Quiz",
+        title: `Nivå ${levelNumber}`,
         html: formHtml,
         focusConfirm: false,
         showCancelButton: true,
         confirmButtonText: "Rätta",
         cancelButtonText: 'Avbryt',
-        preConfirm: () => {
-          const inputs = Swal.getHtmlContainer().querySelectorAll("input");
-          let correct = 0;
-          inputs.forEach(inp => {
-            if (inp.value.trim() === inp.dataset.answer) correct++;
-          });
-          return correct / inputs.length;
-        }
+ // preConfirm returns the fraction of correct answers
+    preConfirm: () => {
+      const inputs = Swal.getHtmlContainer().querySelectorAll("input[data-answer]");
+      let correct = 0;
+      inputs.forEach(inp => {
+        if (inp.value.trim() === inp.dataset.answer) correct++;
+      });
+      return correct / inputs.length;
+    }
       }).then(result => {
         if (result.isConfirmed) {
           const score = result.value;
           if (score >= 0.75) {
             Swal.fire("Snyggt jobbat!", "Du har låst upp en ny nivå.", "success");
-            levels[currentLevel].classList.remove('open');
-            levels[currentLevel].classList.add('done');
-            if (levels[currentLevel + 1]) {
-              levels[currentLevel + 1].classList.remove('locked');
-              levels[currentLevel + 1].classList.add('open');
-            }
+        completeLevel(currentLevel);
           } else {
             Swal.fire("Testa igen!", "Inte riktigt där än.", "question");
           }
         }
       });
     }
+
+// Cheat: fill answers when a key combo is pressed
+(function() {
+  const SEQ = ['ArrowLeft','ArrowRight','ArrowRight','ArrowLeft'];
+  let buffer = [];
+
+  function doCheatFill() {
+    const container = Swal.getHtmlContainer?.();
+    if (!container) return;
+
+    const inputs = container.querySelectorAll('input[data-answer]');
+    if (!inputs || inputs.length === 0) return;
+
+    inputs.forEach(inp => {
+      inp.value = inp.dataset.answer ?? '';
+      inp.style.backgroundColor = '#c8f7c5'; // green highlight
+      inp.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+
+  }
+
+  // Capture key sequence
+  window.addEventListener('keydown', function(e) {
+    const keyId = e.code || ('Key' + (e.key || '').toUpperCase());
+    buffer.push(keyId);
+    if (buffer.length > SEQ.length) buffer.shift();
+
+    if (buffer.length === SEQ.length) {
+      let match = true;
+      for (let i = 0; i < SEQ.length; i++) if (buffer[i] !== SEQ[i]) match = false;
+      if (match) {
+        buffer = [];
+        e.preventDefault?.();
+        doCheatFill();
+      }
+    }
+  }, true);
+})();
+
   </script>
 
 </body>
