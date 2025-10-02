@@ -67,6 +67,20 @@
 
   <script>
     const levels = document.querySelectorAll('.level');
+    function loadProgress() {
+  const stored = localStorage.getItem('levelProgress');
+  if (!stored) return; // no saved progress
+
+  const progress = JSON.parse(stored);
+  levels.forEach((lvl, idx) => {
+    lvl.classList.remove('locked','open','done');
+    lvl.classList.add(progress[idx] || 'locked');
+  });
+}
+
+// Call it once after defining levels
+loadProgress();
+
     let currentLevel = null;
     // Toggle: set true to shuffle questions for each level, false to keep original order
     const RANDOMIZE_QUESTIONS = false;
@@ -126,7 +140,20 @@ function completeLevel(idx) {
     levels[idx + 1].classList.remove('locked');
     levels[idx + 1].classList.add('open');
   }
+
+  // Save progress to localStorage
+  saveProgress();
 }
+
+function saveProgress() {
+  const progress = Array.from(levels).map(lvl => {
+    if (lvl.classList.contains('done')) return 'done';
+    if (lvl.classList.contains('open')) return 'open';
+    return 'locked';
+  });
+  localStorage.setItem('levelProgress', JSON.stringify(progress));
+}
+
 
 
     function startQuiz() {
@@ -223,6 +250,7 @@ let questions = (questionsByLevel[currentLevel] && questionsByLevel[currentLevel
 })();
 
   </script>
+<button onclick="localStorage.removeItem('levelProgress'); location.reload();" style="position:fixed; bottom:10px; right:10px;">Reset Progress</button>
 
 </body>
 </html>
