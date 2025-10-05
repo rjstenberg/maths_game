@@ -154,7 +154,7 @@ function shuffleArray(arr) {
     // Attach click listeners
     levels.forEach((lvl, idx) => {
       lvl.addEventListener('click', () => {
-        if (lvl.classList.contains('open')) {
+    if (lvl.classList.contains('open') || lvl.classList.contains('done')) {
           currentLevel = idx;
           startQuiz();
         }
