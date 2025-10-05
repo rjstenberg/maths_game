@@ -57,9 +57,12 @@
 
 .quiz-item {
   display: flex;
+  justify-content: center;
   align-items: center;
   gap: 6px;           /* space between question text and input */
   margin-bottom: 4px; /* space between rows */
+  text-align: center;
+  width: 100%;
 }
 
 .quiz-question {
@@ -69,9 +72,10 @@
 }
 
 .quiz-input {
-  width: 40px;        /* space for up to 3 digits */
+  width: 3em !important;        /* space for up to 3 digits */
+  text-align: center;
   padding: 4px;
-  font-size: 14px;
+  font-size: 1em;
 }
 
   </style>
@@ -216,7 +220,7 @@ function startQuiz() {
     quizHTML += `
       <div class="quiz-item">
         <label>${q.q}</label>
-        <input type="text" name="q${i}" data-answer="${q.a}" maxlength="3" class="swal2-input small-input" required>
+        <input type="text" name="q${i}" data-answer="${q.a}" maxlength="3" class="swal2-input quiz-input" required>
       </div>
     `;
   });
@@ -231,7 +235,7 @@ function startQuiz() {
     showCancelButton: true,
     confirmButtonText: "Rätta",
     cancelButtonText: 'Avbryt',
-    width: '35%', // wider than default
+    width: '35%',
     allowOutsideClick: false, //prevent closing popup when clicking outside
     allowEscapeKey: false,  //prevent closing popup when using escape
     customClass: {
