@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Maths gamification</title>
+  <title>Multiplikation tabell 3-9</title>
   <style>
     body {
       margin: 0;
@@ -65,6 +65,7 @@
   width: 100%;
 }
 
+
 .quiz-question {
   min-width: 70px;    /* enough for '10 · 12 =' etc. */
   text-align: right;
@@ -93,6 +94,7 @@
     <div id="level2" class="level locked" style="top: 6.6%; left: 51.7%;">4</div>
     <div id="level3" class="level locked" style="top: 6.6%; left: 66.1%;">5</div>
     <div id="level4" class="level locked" style="top: 26.7%; left: 66.2%;">6</div>
+    <div id="levelBonus" class="level locked bonus" style="top: 43%; left: 57%; border-radius: 50%; width:5% ;">⭐</div>    <!-- Bonus level -->
     <div id="level5" class="level locked" style="top: 86.1%; left: 24%;">7</div>
     <div id="level6" class="level locked" style="top: 86.1%; left: 51.8%;">8</div>
     <div id="level7" class="level locked" style="top: 71.4%; left: 78%;">9</div>
@@ -110,6 +112,14 @@
     lvl.classList.remove('locked','open','done');
     lvl.classList.add(progress[idx] || 'locked');
   });
+  const savedAnimal = localStorage.getItem("bonusAnimal");
+if (savedAnimal) {
+  placeAnimalOnMap(savedAnimal);
+  const bonusLvl = document.getElementById("levelBonus");
+  bonusLvl.classList.remove("locked");
+  bonusLvl.classList.add("done");
+}
+
 }
 
 // Call it once after defining levels
@@ -119,20 +129,24 @@ loadProgress();
     // Toggle: set true to shuffle questions for each level, false to keep original order
     const RANDOMIZE_QUESTIONS = true;
 
-// create levels 3–9 (each with 3×3 .. 9×9)
+  // create levels 3–9 (each with 3×3 .. 9×9)
 const questionsByLevel = [];
 
 for (let table = 3; table <= 9; table++) {
   const levelQuestions = [];
   for (let i = 3; i <= 9; i++) {
     levelQuestions.push({
-      q: `${table} × ${i} =`,
+      q: `${table} · ${i} =`,
       a: String(table * i)
     });
   }
   questionsByLevel.push(levelQuestions);
-}
 
+  // duplicate table 7
+  if (table === 7) {
+    questionsByLevel.push([...levelQuestions]);
+  }
+}
 
 // Optional fallback if a level has no questions
 const defaultQuestionBank = [
@@ -154,17 +168,29 @@ function shuffleArray(arr) {
       lvl.addEventListener('click', () => {
     if (lvl.classList.contains('open') || lvl.classList.contains('done')) {
           currentLevel = idx;
-          startQuiz();
+          if (lvl.classList.contains('bonus')) {
+      openAnimalSelector();
+    } else {
+      startQuiz();
+    }
         }
       });
     });
 
 function completeLevel(idx) {
-  levels[idx].classList.remove('open');
-  levels[idx].classList.add('done');
+  const lvl = levels[idx];
+  lvl.classList.remove('open');
+  lvl.classList.add('done');
 
+  //check if level 4 is completed, unlock bonus level
+  if (lvl.id == "level4") {
+    //document.getElementById("levelBonus").classList.remove('locked');
+    //document.getElementById("levelBonus").classList.add('open');
+    levels[idx + 2].classList.remove('locked');
+    levels[idx + 2].classList.add('open');
+  }
   // unlock next
-  if (levels[idx + 1]) {
+  if (levels[idx + 1]) { 
     levels[idx + 1].classList.remove('locked');
     levels[idx + 1].classList.add('open');
   }
@@ -172,7 +198,7 @@ function completeLevel(idx) {
   // Save progress to localStorage
   saveProgress();
 }
-
+/*
 function saveProgress() {
   const progress = Array.from(levels).map(lvl => {
     if (lvl.classList.contains('done')) return 'done';
@@ -181,7 +207,6 @@ function saveProgress() {
   });
   localStorage.setItem('levelProgress', JSON.stringify(progress));
 }
-
 function generateMultiplicationQuestions(levelNum) {
   const questions = [];
   let startTable, endTable;
@@ -206,15 +231,124 @@ function generateMultiplicationQuestions(levelNum) {
 
   return questions;
 }
+*/
+
+function openAnimalSelector() {
+  const animals = {
+    "Hund": "🐶",
+    "Katt": "🐱",
+    "Groda": "🐸",
+    "Fågel": "🐦",
+    "Fisk": "🐟"
+  };
+
+  const selectHTML = `
+    <select id="animalSelect" class="swal2-select">
+      <option value="" disabled selected>Välj ett djur</option>
+      ${Object.keys(animals).map(a => `<option value="${a}">${a}</option>`).join('')}
+    </select>
+  `;
+
+  Swal.fire({
+    title: "Bonusnivå 🐾",
+    html: selectHTML,
+    confirmButtonText: "Placera djur",
+    showCancelButton: true,
+    allowOutsideClick: false,
+    width: "40%"
+  }).then(result => {
+    if (!result.isConfirmed) return;
+    const animalType = document.getElementById('animalSelect').value;
+    if (!animalType) return;
+
+    placeAnimalOnMap(animalType, true); // true = save it
+    //Swal.fire("Kul!", "Ditt djur har lagts till på kartan!", "success",);
+    
+
+    const bonusLvl = document.getElementById("levelBonus");
+    bonusLvl.classList.remove('open');
+    bonusLvl.classList.add('done');
+    saveProgress?.();
+  });
+}
+function placeAnimalOnMap(type, save = false) {
+  const animals = {
+    "Hund": "🐶",
+    "Katt": "🐱",
+    "Groda": "🐸",
+    "Fågel": "🐦",
+    "Fisk": "🐟"
+  };
+
+  /*const positions = {
+    "dog": { top: "70%", left: "20%" },
+    "cat": { top: "40%", left: "60%" },
+    "frog": { top: "80%", left: "75%" },
+    "bird": { top: "25%", left: "30%" },
+    "fish": { top: "50%", left: "50%" }
+  };*/
+
+  // Remove any existing animal icon before placing a new one
+  const oldIcon = document.querySelector(".animal-icon");
+  if (oldIcon) oldIcon.remove();
+
+  const pos = {top: "53%", left: "15%"};
+
+  //const pos = positions[type];
+  //if (!pos) return;
+
+  const icon = document.createElement("div");
+  icon.classList.add("animal-icon");
+  icon.textContent = animals[type];
+  icon.style.position = "absolute";
+  icon.style.top = pos.top;
+  icon.style.left = pos.left;
+  icon.style.fontSize = "5.5rem";
+  icon.style.transform = "translate(-50%, -50%)";
+  icon.style.pointerEvents = "none";
+  icon.style.zIndex = "50";
+
+  document.querySelector(".map-container").appendChild(icon);
+
+  // Save to localStorage
+  if (save) {
+    localStorage.setItem("bonusAnimal", type);
+  }
+}
+
 
 function startQuiz() {
+  const levelNumber = currentLevel + 1; // 1-indexed
+
   // Generate questions per level
-    const levelNumber = currentLevel + 1; // show human-readable number (1-indexed)
+  /*function questionsByLevel(levelNum) {
+    const questions = [];
+    let startTable, endTable;
+
+    if (levelNum === 1) {
+      startTable = 1; endTable = 6;
+    } else if (levelNum === 2) {
+      startTable = 7; endTable = 12;
+    } else {
+      startTable = 1; endTable = 6; // fallback
+    }
+
+    for (let i = startTable; i <= endTable; i++) {
+      for (let j = 0; j <= 10; j++) {
+        questions.push({ q: `${j} · ${i} = ?`, a: (i * j).toString() });
+      }
+    }
+    return questions;
+  }
+
+  let questions = generateMultiplicationQuestions(levelNumber);*/
+
   const questions = questionsByLevel[currentLevel].slice(); // copy to avoid mutation
- // optionally shuffle
+
+  // optionally shuffle
   if (RANDOMIZE_QUESTIONS) questions.sort(() => 0.5 - Math.random());
 
-  // Build the form HTML
+    // Build the form HTML
   let quizHTML = "<form id='quizForm' class='quiz-grid'>";
   questions.forEach((q, i) => {
     quizHTML += `
@@ -225,42 +359,98 @@ function startQuiz() {
     `;
   });
   quizHTML += "</form>";
- 
 
+const firstQuestion = questionsByLevel[currentLevel][0].q;
+const tableNumber = parseInt(firstQuestion.split("·")[0].trim());
   // Show SweetAlert2 quiz popup
   Swal.fire({
-    title: `Nivå ${levelNumber}`,
+title: `Tabell ${tableNumber}`,
     html: quizHTML,
     focusConfirm: false,
     showCancelButton: true,
-    confirmButtonText: "Rätta",
-    cancelButtonText: 'Avbryt',
-    width: '35%',
     allowOutsideClick: false, //prevent closing popup when clicking outside
     allowEscapeKey: false,  //prevent closing popup when using escape
+    confirmButtonText: "Rätta",
+    cancelButtonText: 'Avbryt',
+    width: '35%',  
     customClass: {
     popup: 'quiz-popup'
   },
 
-    preConfirm: () => {
-      const inputs = Swal.getHtmlContainer().querySelectorAll("input[data-answer]");
-      let correct = 0;
-      inputs.forEach(inp => {
-        if (inp.value.trim() === inp.dataset.answer) correct++;
-      });
-      return correct / inputs.length;
-    }
-  }).then(result => {
-    if (result.isConfirmed) {
-      const score = result.value;
-      if (score >= 0.75) {
-        Swal.fire("Snyggt jobbat!", "Du har låst upp en ny nivå.", "success");
-        completeLevel(currentLevel);
-      } else {
-        Swal.fire("Testa igen!", "Inte riktigt där än.", "question");
-      }
-    }
+  preConfirm: () => {
+  const inputs = Swal.getHtmlContainer().querySelectorAll("input[data-answer]");
+  const answers = [];
+  let correctCount = 0;
+
+  inputs.forEach(inp => {
+    const user = inp.value.trim();
+    const correct = inp.dataset.answer.trim();
+    const isCorrect = user === correct;
+    answers.push({ q: inp.previousElementSibling.textContent, user, correct, isCorrect });
+    if (isCorrect) correctCount++;
   });
+
+  // return all info, not just the score
+  return { score: correctCount / inputs.length, answers };
+}
+}).then(result => {
+  if (!result.isConfirmed) return;
+
+  const { score, answers } = result.value;
+  const passed = score >= 0.75;
+  const level = levels[currentLevel];
+  const isAlreadyDone = level.classList.contains('done');
+
+  // Filter to show only wrong answers
+  const wrongAnswers = answers.filter(a => !a.isCorrect);
+
+  // Build HTML feedback list (only wrong ones)
+  let feedbackHTML = "";
+  if (wrongAnswers.length === 0) {
+    feedbackHTML = "<p>Alla svar var rätt! 🎉</p>";
+  } else {
+    feedbackHTML = "<div class='feedback-list'><p>Kom ihåg till nästa gång:</p>";
+    wrongAnswers.forEach(a => {
+      feedbackHTML += `
+        <div>
+          ${a.q} 
+          <b style="color:green">${a.correct}</b>
+        </div>`;
+    });
+    feedbackHTML += "</div>";
+  }
+
+  // Use your motivational text with feedback below it
+  let title = passed ? "Snyggt jobbat!" : "Testa igen!";
+  
+  const isLastLevel = currentLevel === levels.length -1;
+
+
+  let text; 
+  if (passed) {
+    if (isLastLevel) {
+    text = "🎉 Du har klarat hela spelet! Grattis!";
+    } else if (isAlreadyDone) {
+      text = "Du klarade nivån igen.";
+    } else {
+      text = "Du har låst upp en ny nivå.";
+    }
+  } else {
+    text = "Inte riktigt där än.";
+  }
+
+  Swal.fire({
+    title,
+    html: `<p>${text}</p><hr>${feedbackHTML}`,
+    icon: passed ? "success" : "question",
+    confirmButtonText: passed ? "OK" : "OK",
+    width: "60%",
+    allowOutsideClick: false
+  }).then(() => {
+    if (passed && !isAlreadyDone) completeLevel(currentLevel);
+  });
+});
+
 }
 
 
@@ -289,6 +479,7 @@ function startQuiz() {
   });
 }
  // Add the Cheat button dynamically
+ /*
     const cheatBtn = document.createElement('button');
     cheatBtn.innerText = 'Cheat';
     cheatBtn.style = `
@@ -308,7 +499,7 @@ function startQuiz() {
       doCheatFill();
     });
     document.body.appendChild(cheatBtn);
-
+    */
   // Capture key sequence
   window.addEventListener('keydown', function(e) {
     const keyId = e.code || ('Key' + (e.key || '').toUpperCase());
@@ -328,7 +519,16 @@ function startQuiz() {
 })();
 
   </script>
-<button onclick="localStorage.removeItem('levelProgress'); location.reload();" style="position:fixed; bottom:10px; right:10px;">Reset Progress</button>
+<button onclick="
+localStorage.removeItem('levelProgress'); 
+localStorage.removeItem('bonusAnimal');
+location.reload();
+" style="
+position:fixed; 
+bottom:10px; 
+right:10px;
+">Reset Progress
+</button>
 
 
 </body>

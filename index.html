@@ -89,6 +89,7 @@
     <div id="level2" class="level locked" style="top: 6.6%; left: 51.7%;">2</div>
     <div id="level3" class="level locked" style="top: 6.6%; left: 66.1%;">3</div>
     <div id="level4" class="level locked" style="top: 26.7%; left: 66.2%;">4</div>
+    <div id="levelBonus" class="level locked bonus" style="top: 43%; left: 57%; border-radius: 50%; width:5% ;">⭐</div>    <!-- Bonus level -->
     <div id="level5" class="level locked" style="top: 86.1%; left: 24%;">5</div>
     <div id="level6" class="level locked" style="top: 86.1%; left: 51.8%;">6</div>
     <div id="level7" class="level locked" style="top: 71.4%; left: 78%;">7</div>
@@ -106,6 +107,14 @@
     lvl.classList.remove('locked','open','done');
     lvl.classList.add(progress[idx] || 'locked');
   });
+  const savedAnimal = localStorage.getItem("bonusAnimal");
+if (savedAnimal) {
+  placeAnimalOnMap(savedAnimal);
+  const bonusLvl = document.getElementById("levelBonus");
+  bonusLvl.classList.remove("locked");
+  bonusLvl.classList.add("done");
+}
+
 }
 
 // Call it once after defining levels
@@ -156,17 +165,29 @@ function shuffleArray(arr) {
       lvl.addEventListener('click', () => {
     if (lvl.classList.contains('open') || lvl.classList.contains('done')) {
           currentLevel = idx;
-          startQuiz();
+          if (lvl.classList.contains('bonus')) {
+      openAnimalSelector();
+    } else {
+      startQuiz();
+    }
         }
       });
     });
 
 function completeLevel(idx) {
-  levels[idx].classList.remove('open');
-  levels[idx].classList.add('done');
+  const lvl = levels[idx];
+  lvl.classList.remove('open');
+  lvl.classList.add('done');
 
+  //check if level 4 is completed, unlock bonus level
+  if (lvl.id == "level4") {
+    //document.getElementById("levelBonus").classList.remove('locked');
+    //document.getElementById("levelBonus").classList.add('open');
+    levels[idx + 2].classList.remove('locked');
+    levels[idx + 2].classList.add('open');
+  }
   // unlock next
-  if (levels[idx + 1]) {
+  if (levels[idx + 1]) { 
     levels[idx + 1].classList.remove('locked');
     levels[idx + 1].classList.add('open');
   }
@@ -208,6 +229,90 @@ function generateMultiplicationQuestions(levelNum) {
 
   return questions;
 }
+
+function openAnimalSelector() {
+  const animals = {
+    "Hund": "🐶",
+    "Katt": "🐱",
+    "Groda": "🐸",
+    "Fågel": "🐦",
+    "Fisk": "🐟"
+  };
+
+  const selectHTML = `
+    <select id="animalSelect" class="swal2-select">
+      <option value="" disabled selected>Välj ett djur</option>
+      ${Object.keys(animals).map(a => `<option value="${a}">${a}</option>`).join('')}
+    </select>
+  `;
+
+  Swal.fire({
+    title: "Bonusnivå 🐾",
+    html: selectHTML,
+    confirmButtonText: "Placera djur",
+    showCancelButton: true,
+    allowOutsideClick: false,
+    width: "40%"
+  }).then(result => {
+    if (!result.isConfirmed) return;
+    const animalType = document.getElementById('animalSelect').value;
+    if (!animalType) return;
+
+    placeAnimalOnMap(animalType, true); // true = save it
+    //Swal.fire("Kul!", "Ditt djur har lagts till på kartan!", "success",);
+    
+
+    const bonusLvl = document.getElementById("levelBonus");
+    bonusLvl.classList.remove('open');
+    bonusLvl.classList.add('done');
+    saveProgress?.();
+  });
+}
+function placeAnimalOnMap(type, save = false) {
+  const animals = {
+    "Hund": "🐶",
+    "Katt": "🐱",
+    "Groda": "🐸",
+    "Fågel": "🐦",
+    "Fisk": "🐟"
+  };
+
+  /*const positions = {
+    "dog": { top: "70%", left: "20%" },
+    "cat": { top: "40%", left: "60%" },
+    "frog": { top: "80%", left: "75%" },
+    "bird": { top: "25%", left: "30%" },
+    "fish": { top: "50%", left: "50%" }
+  };*/
+
+  // Remove any existing animal icon before placing a new one
+  const oldIcon = document.querySelector(".animal-icon");
+  if (oldIcon) oldIcon.remove();
+
+  const pos = {top: "53%", left: "15%"};
+
+  //const pos = positions[type];
+  //if (!pos) return;
+
+  const icon = document.createElement("div");
+  icon.classList.add("animal-icon");
+  icon.textContent = animals[type];
+  icon.style.position = "absolute";
+  icon.style.top = pos.top;
+  icon.style.left = pos.left;
+  icon.style.fontSize = "5.5rem";
+  icon.style.transform = "translate(-50%, -50%)";
+  icon.style.pointerEvents = "none";
+  icon.style.zIndex = "50";
+
+  document.querySelector(".map-container").appendChild(icon);
+
+  // Save to localStorage
+  if (save) {
+    localStorage.setItem("bonusAnimal", type);
+  }
+}
+
 
 function startQuiz() {
   const levelNumber = currentLevel + 1; // 1-indexed
@@ -281,6 +386,7 @@ function startQuiz() {
     html: quizHTML,
     focusConfirm: false,
     showCancelButton: true,
+    allowOutsideClick: false,
     confirmButtonText: "Rätta",
     cancelButtonText: 'Avbryt',
 
@@ -334,11 +440,21 @@ function startQuiz() {
 
   // Use your motivational text with feedback below it
   let title = passed ? "Snyggt jobbat!" : "Testa igen!";
-  let text = passed
-    ? isAlreadyDone
-      ? "Du klarade nivån igen."
-      : "Du har låst upp en ny nivå."
-    : "Inte riktigt där än.";
+const isLastLevel = currentLevel === levels.length -1;
+
+
+  let text; 
+  if (passed) {
+    if (isLastLevel) {
+    text = "🎉 Du har klarat hela spelet! Grattis!";
+    } else if (isAlreadyDone) {
+      text = "Du klarade nivån igen.";
+    } else {
+      text = "Du har låst upp en ny nivå.";
+    }
+  } else {
+    text = "Inte riktigt där än.";
+  }
 
   Swal.fire({
     title,
@@ -420,7 +536,16 @@ function startQuiz() {
 })();
 
   </script>
-<button onclick="localStorage.removeItem('levelProgress'); location.reload();" style="position:fixed; bottom:10px; right:10px;">Reset Progress</button>
+<button onclick="
+localStorage.removeItem('levelProgress'); 
+localStorage.removeItem('bonusAnimal');
+location.reload();
+" style="
+position:fixed; 
+bottom:10px; 
+right:10px;
+">Reset Progress
+</button>
 
 
 </body>
