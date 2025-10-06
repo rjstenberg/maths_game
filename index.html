@@ -289,25 +289,70 @@ function startQuiz() {
     popup: 'quiz-popup'
   },
 
-    preConfirm: () => {
-      const inputs = Swal.getHtmlContainer().querySelectorAll("input[data-answer]");
-      let correct = 0;
-      inputs.forEach(inp => {
-        if (inp.value.trim() === inp.dataset.answer) correct++;
-      });
-      return correct / inputs.length;
-    }
-  }).then(result => {
-    if (result.isConfirmed) {
-      const score = result.value;
-      if (score >= 0.75) {
-        Swal.fire("Snyggt jobbat!", "Du har låst upp en ny nivå.", "success");
-        completeLevel(currentLevel);
-      } else {
-        Swal.fire("Testa igen!", "Inte riktigt där än.", "question");
-      }
-    }
+  preConfirm: () => {
+  const inputs = Swal.getHtmlContainer().querySelectorAll("input[data-answer]");
+  const answers = [];
+  let correctCount = 0;
+
+  inputs.forEach(inp => {
+    const user = inp.value.trim();
+    const correct = inp.dataset.answer.trim();
+    const isCorrect = user === correct;
+    answers.push({ q: inp.previousElementSibling.textContent, user, correct, isCorrect });
+    if (isCorrect) correctCount++;
   });
+
+  // return all info, not just the score
+  return { score: correctCount / inputs.length, answers };
+}
+}).then(result => {
+  if (!result.isConfirmed) return;
+
+  const { score, answers } = result.value;
+  const passed = score >= 0.75;
+  const level = levels[currentLevel];
+  const isAlreadyDone = level.classList.contains('done');
+
+  // Filter to show only wrong answers
+  const wrongAnswers = answers.filter(a => !a.isCorrect);
+
+  // Build HTML feedback list (only wrong ones)
+  let feedbackHTML = "";
+  if (wrongAnswers.length === 0) {
+    feedbackHTML = "<p>Alla svar var rätt! 🎉</p>";
+  } else {
+    feedbackHTML = "<div class='feedback-list'><p>Kom ihåg till nästa gång:</p>";
+    wrongAnswers.forEach(a => {
+      feedbackHTML += `
+        <div>
+          ${a.q} 
+          <b style="color:green">${a.correct}</b>
+        </div>`;
+    });
+    feedbackHTML += "</div>";
+  }
+
+  // Use your motivational text with feedback below it
+  let title = passed ? "Snyggt jobbat!" : "Testa igen!";
+  let text = passed
+    ? isAlreadyDone
+      ? "Du klarade nivån igen."
+      : "Du har låst upp en ny nivå."
+    : "Inte riktigt där än.";
+
+  Swal.fire({
+    title,
+    html: `<p>${text}</p><hr>${feedbackHTML}`,
+    icon: passed ? "success" : "question",
+    confirmButtonText: passed ? "OK" : "OK",
+    width: "60%",
+    allowOutsideClick: false
+  }).then(() => {
+    if (passed && !isAlreadyDone) completeLevel(currentLevel);
+  });
+});
+
+
 }
 
 
