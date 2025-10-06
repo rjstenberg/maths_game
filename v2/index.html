@@ -79,6 +79,15 @@
   font-size: 1em;
 }
 
+.star-icon {
+  animation: twinkle 1.5s infinite alternate;
+}
+
+@keyframes twinkle {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 0.7; }
+  100% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+}
+
   </style>
 
   <!-- SweetAlert2 -->
@@ -316,6 +325,33 @@ function placeAnimalOnMap(type, save = false) {
   }
 }
 
+function placeStarsOnMap() {
+  const starPositions = [
+    { top: "5%", left: "5%" },
+    { top: "5%", left: "95%" },
+    { top: "95%", left: "5%" },
+    { top: "95%", left: "95%" },
+  ];
+
+  const mapContainer = document.querySelector(".map-container");
+  if (!mapContainer) return;
+
+  // Add stars
+  starPositions.forEach(pos => {
+    const star = document.createElement("div");
+    star.classList.add("star-icon");
+    star.textContent = "⭐"; // or 🌟 if you prefer
+    star.style.position = "absolute";
+    star.style.top = pos.top;
+    star.style.left = pos.left;
+    star.style.transform = "translate(-50%, -50%)";
+    star.style.fontSize = "3rem";       // scales with map
+    star.style.pointerEvents = "none";
+    star.style.zIndex = "50";
+    document.querySelector(".map-container").appendChild(star);
+  });
+    localStorage.setItem("starsPlaced", "true");
+}
 
 function startQuiz() {
   const levelNumber = currentLevel + 1; // 1-indexed
@@ -430,6 +466,7 @@ title: `Tabell ${tableNumber}`,
   if (passed) {
     if (isLastLevel) {
     text = "🎉 Du har klarat hela spelet! Grattis!";
+    placeStarsOnMap(); // add stars to background
     } else if (isAlreadyDone) {
       text = "Du klarade nivån igen.";
     } else {
@@ -522,6 +559,7 @@ title: `Tabell ${tableNumber}`,
 <button onclick="
 localStorage.removeItem('levelProgress'); 
 localStorage.removeItem('bonusAnimal');
+localStorage.removeItem('starsPlaced');
 location.reload();
 " style="
 position:fixed; 
