@@ -101,12 +101,13 @@
     <!-- Example levels -->
     <div id="level1" class="level open" style="top: 6.6%; left: 23.9%;">3</div>
     <div id="level2" class="level locked" style="top: 6.6%; left: 51.7%;">4</div>
-    <div id="level3" class="level locked" style="top: 6.6%; left: 66.1%;">5</div>
-    <div id="level4" class="level locked" style="top: 26.7%; left: 66.2%;">6</div>
-    <div id="levelBonus" class="level locked bonus" style="top: 43%; left: 57%; border-radius: 50%; width:5% ;">⭐</div>    <!-- Bonus level -->
-    <div id="level5" class="level locked" style="top: 86.1%; left: 24%;">7</div>
-    <div id="level6" class="level locked" style="top: 86.1%; left: 51.8%;">8</div>
-    <div id="level7" class="level locked" style="top: 71.4%; left: 78%;">9</div>
+    <div id="level3" class="level locked" style="top: 6.6%; left: 66.1%;">5</div> <!-- Optional level -->
+    <div id="level4" class="level locked" style="top: 26.7%; left: 66.2%;">6</div> <!-- Optional level -->
+    <div id="levelBonus" class="level locked bonus" style="top: 18%; left: 86%; border-radius: 50%; width:5% ;">⭐</div>    <!-- Bonus level -->
+    <div id="level5" class="level locked" style="top: 46.5%; left: 38.5%;">7</div>
+    <div id="level6" class="level locked" style="top: 86.1%; left: 24%;">8</div>
+    <div id="level7" class="level locked" style="top: 86.1%; left: 51.8%;">9</div>
+    <div id="level8" class="level locked" style="top: 71.4%; left: 76.7%;">10</div>
 
   </div>
 
@@ -128,7 +129,11 @@ if (savedAnimal) {
   bonusLvl.classList.remove("locked");
   bonusLvl.classList.add("done");
 }
-
+const starsPlaced = localStorage.getItem("starsPlaced");
+if (starsPlaced === "true")
+{
+  placeStarsOnMap();
+}
 }
 
 // Call it once after defining levels
@@ -141,7 +146,7 @@ loadProgress();
   // create levels 3–9 (each with 3×3 .. 9×9)
 const questionsByLevel = [];
 
-for (let table = 3; table <= 9; table++) {
+for (let table = 3; table <= 10; table++) {
   const levelQuestions = [];
   for (let i = 3; i <= 9; i++) {
     levelQuestions.push({
@@ -156,13 +161,6 @@ for (let table = 3; table <= 9; table++) {
     questionsByLevel.push([...levelQuestions]);
   }
 }
-
-// Optional fallback if a level has no questions
-const defaultQuestionBank = [
-  { q: "5 + 3 = ?", a: "8" },
-  { q: "10 - 4 = ?", a: "6" },
-  { q: "3 × 3 = ?", a: "9" }
-];
 
 function shuffleArray(arr) {
   // in-place shuffle
@@ -191,56 +189,68 @@ function completeLevel(idx) {
   lvl.classList.remove('open');
   lvl.classList.add('done');
 
-  //check if level 4 is completed, unlock bonus level
-  if (lvl.id == "level4") {
-    //document.getElementById("levelBonus").classList.remove('locked');
-    //document.getElementById("levelBonus").classList.add('open');
-    levels[idx + 2].classList.remove('locked');
-    levels[idx + 2].classList.add('open');
+  const next = levels[idx+1];
+
+  // special rule
+  if (lvl.id == "level2") {
+    document.getElementById("level3").classList.remove('locked');
+    document.getElementById("level3").classList.add('open');
+
+    document.getElementById("level4").classList.remove('locked');
+    document.getElementById("level4").classList.add('open');
+
+    document.getElementById("level5").classList.remove('locked');
+    document.getElementById("level5").classList.add('open');
   }
-  // unlock next
-  if (levels[idx + 1]) { 
-    levels[idx + 1].classList.remove('locked');
-    levels[idx + 1].classList.add('open');
+  else if (lvl.id === "level3" || lvl.id === "level4")
+  {
+    const bonus = document.getElementById("levelBonus");
+    if (bonus.classList.contains("locked")) {
+      bonus.classList.remove("locked");
+      bonus.classList.add("open");
+    }
+  }
+  else if (next) 
+  { 
+    next.classList.remove('locked');
+    next.classList.add('open');
   }
 
   // Save progress to localStorage
   saveProgress();
 }
-/*
+
 function saveProgress() {
+  //Each level's state
   const progress = Array.from(levels).map(lvl => {
     if (lvl.classList.contains('done')) return 'done';
     if (lvl.classList.contains('open')) return 'open';
     return 'locked';
   });
   localStorage.setItem('levelProgress', JSON.stringify(progress));
-}
-function generateMultiplicationQuestions(levelNum) {
-  const questions = [];
-  let startTable, endTable;
 
-  if (levelNum === 1) {
-    startTable = 1; endTable = 6;
-  } else if (levelNum === 2) {
-    startTable = 7; endTable = 12;
-  } else {
-    // fallback: levelNum tables starting at 1
-    startTable = 1; endTable = 6;
+  //Placed animal
+    const animalIcon = document.querySelector('.animal-icon');
+  if (animalIcon) {
+    // Find the emoji -> convert back to animal name if possible
+    const emoji = animalIcon.textContent.trim();
+    const animals = {
+      "🐶": "Hund",
+      "🐱": "Katt",
+      "🐹": "Hamster",
+      "🐰": "Kanin",
+      "🐷": "Gris",
+      "🦋": "Fjäril"
+    };
+    const animalName = animals[emoji] || emoji;
+    localStorage.setItem('bonusAnimal', animalName);
   }
 
-  for (let i = startTable; i <= endTable; i++) {
-    for (let j = 0; j <= 10; j++) {
-      questions.push({
-        q: `${j} · ${i} = ?`,
-        a: (i * j).toString()
-      });
-    }
-  }
-
-  return questions;
+  // --- Save stars if they exist ---
+  const starsPlaced = document.querySelectorAll('.star-icon').length > 0;
+  localStorage.setItem('starsPlaced', starsPlaced ? 'true' : 'false');
 }
-*/
+
 
 function openAnimalSelector() {
   const animals = {
@@ -291,22 +301,11 @@ function placeAnimalOnMap(type, save = false) {
     "Fjäril": "🦋"
   };
 
-  /*const positions = {
-    "dog": { top: "70%", left: "20%" },
-    "cat": { top: "40%", left: "60%" },
-    "frog": { top: "80%", left: "75%" },
-    "bird": { top: "25%", left: "30%" },
-    "fish": { top: "50%", left: "50%" }
-  };*/
-
   // Remove any existing animal icon before placing a new one
   const oldIcon = document.querySelector(".animal-icon");
   if (oldIcon) oldIcon.remove();
 
   const pos = {top: "53%", left: "15%"};
-
-  //const pos = positions[type];
-  //if (!pos) return;
 
   const icon = document.createElement("div");
   icon.classList.add("animal-icon");
@@ -357,29 +356,6 @@ function placeStarsOnMap() {
 
 function startQuiz() {
   const levelNumber = currentLevel + 1; // 1-indexed
-
-  // Generate questions per level
-  /*function questionsByLevel(levelNum) {
-    const questions = [];
-    let startTable, endTable;
-
-    if (levelNum === 1) {
-      startTable = 1; endTable = 6;
-    } else if (levelNum === 2) {
-      startTable = 7; endTable = 12;
-    } else {
-      startTable = 1; endTable = 6; // fallback
-    }
-
-    for (let i = startTable; i <= endTable; i++) {
-      for (let j = 0; j <= 10; j++) {
-        questions.push({ q: `${j} · ${i} = ?`, a: (i * j).toString() });
-      }
-    }
-    return questions;
-  }
-
-  let questions = generateMultiplicationQuestions(levelNumber);*/
 
   const questions = questionsByLevel[currentLevel].slice(); // copy to avoid mutation
 
