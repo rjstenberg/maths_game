@@ -128,12 +128,22 @@
     <div id="level5" class="level locked" style="top: 46.5%; left: 38.5%;">7</div>
     <div id="level6" class="level locked" style="top: 86.1%; left: 24%;">8</div>
     <div id="level7" class="level locked" style="top: 86.1%; left: 51.8%;">9</div>
-    <div id="level8" class="level locked" style="top: 71.4%; left: 76.7%;">10</div>
+    <div id="level8" class="level locked" style="top: 71.4%; left: 76.7%;">🔥</div>
 
   </div>
 
 <script>
 const levels = document.querySelectorAll('.level');
+
+const animals = {
+  "Hund": "🐶",
+  "Katt": "🐱",
+  "Hamster": "🐹",
+  "Kanin": "🐰",
+  "Gris": "🐷",
+  "Fjäril": "🦋"
+};
+
 function loadProgress() {
     const stored = localStorage.getItem('levelProgress');
     if (!stored) return; // no saved progress
@@ -255,17 +265,11 @@ function saveProgress() {
   if (animalIcon) {
     // Find the emoji -> convert back to animal name if possible
     const emoji = animalIcon.textContent.trim();
-    const animals = {
-      "🐶": "Hund",
-      "🐱": "Katt",
-      "🐹": "Hamster",
-      "🐰": "Kanin",
-      "🐷": "Gris",
-      "🦋": "Fjäril"
-    };
     const animalName = animals[emoji] || emoji;
-    localStorage.setItem('bonusAnimal', animalName);
-  }
+const savedAnimal = localStorage.getItem("bonusAnimal");
+if (savedAnimal && animals[savedAnimal]) {
+  placeAnimalOnMap(savedAnimal, false);
+}  }
 
   // --- Save stars if they exist ---
   const starsPlaced = document.querySelectorAll('.star-icon').length > 0;
@@ -274,15 +278,6 @@ function saveProgress() {
 
 
 function openAnimalSelector() {
-  const animals = {
-    "Hund": "🐶",
-    "Katt": "🐱",
-    "Hamster": "🐹",
-    "Kanin": "🐰",
-    "Gris": "🐷",
-    "Fjäril": "🦋"
-  };
-
   const selectHTML = `
     <select id="animalSelect" class="swal2-select">
       <option value="" disabled selected>Välj ett djur</option>
@@ -312,16 +307,7 @@ function openAnimalSelector() {
     saveProgress?.();
   });
 }
-function placeAnimalOnMap(type, save = false) {
-  const animals = {
-    "Hund": "🐶",
-    "Katt": "🐱",
-    "Hamster": "🐹",
-    "Kanin": "🐰",
-    "Gris": "🐷",
-    "Fjäril": "🦋"
-  };
-
+function placeAnimalOnMap(type, save = true) {
   // Remove any existing animal icon before placing a new one
   const oldIcon = document.querySelector(".animal-icon");
   if (oldIcon) oldIcon.remove();
