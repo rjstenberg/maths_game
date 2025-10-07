@@ -41,11 +41,11 @@
       cursor: pointer;
     }
 
-    .locked { background-color: red; cursor: not-allowed; }
-    .open   { background-color: blue; }
-    .done   { background-color: green; }
+  .locked { background-color: red; cursor: not-allowed; }
+  .open   { background-color: blue; }
+  .done   { background-color: green; }
 
-    .quiz-row {
+.quiz-row {
   display: flex;
   gap: 20px; /* space between columns */
 }
@@ -55,28 +55,49 @@
   flex: 1;
 }
 
+/* Shared grid layouts */
+.quiz-grid-single {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px 0;
+  justify-items: center;
+  align-items: center;
+}
+
+.quiz-grid-final {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px 20px;
+  justify-items: center;
+  align-items: center;
+}
+
+/* Each question+input pair */
 .quiz-item {
   display: flex;
-  justify-content: center;
+  justify-content: center;  /* centers the entire pair */
   align-items: center;
-  gap: 6px;           /* space between question text and input */
-  margin-bottom: 4px; /* space between rows */
-  text-align: center;
+  gap: 8px;
   width: 100%;
-}
-
-
-.quiz-question {
-  min-width: 70px;    /* enough for '10 · 12 =' etc. */
-  text-align: right;
-    display: inline-block; /* ensures consistent width */
-}
-
-.quiz-input {
-  width: 3em !important;        /* space for up to 3 digits */
   text-align: center;
-  padding: 4px;
-  font-size: 1em;
+}
+
+/* The question label */
+.quiz-question {
+  text-align: right;
+  font-weight: 500;
+  font-size: 1rem;
+  min-width: 60px;          /* keep compact width */
+}
+
+/* The input field */
+.quiz-input {
+  width: 3em !important;
+  text-align: center;
+  padding: 4px 6px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
 }
 
 .star-icon {
@@ -111,29 +132,29 @@
 
   </div>
 
-  <script>
-    const levels = document.querySelectorAll('.level');
-    function loadProgress() {
-  const stored = localStorage.getItem('levelProgress');
-  if (!stored) return; // no saved progress
+<script>
+const levels = document.querySelectorAll('.level');
+function loadProgress() {
+    const stored = localStorage.getItem('levelProgress');
+    if (!stored) return; // no saved progress
 
-  const progress = JSON.parse(stored);
-  levels.forEach((lvl, idx) => {
-    lvl.classList.remove('locked','open','done');
-    lvl.classList.add(progress[idx] || 'locked');
-  });
-  const savedAnimal = localStorage.getItem("bonusAnimal");
-if (savedAnimal) {
-  placeAnimalOnMap(savedAnimal);
-  const bonusLvl = document.getElementById("levelBonus");
-  bonusLvl.classList.remove("locked");
-  bonusLvl.classList.add("done");
-}
-const starsPlaced = localStorage.getItem("starsPlaced");
-if (starsPlaced === "true")
-{
-  placeStarsOnMap();
-}
+    const progress = JSON.parse(stored);
+    levels.forEach((lvl, idx) => {
+      lvl.classList.remove('locked','open','done');
+      lvl.classList.add(progress[idx] || 'locked');
+    });
+    const savedAnimal = localStorage.getItem("bonusAnimal");
+    if (savedAnimal) {
+      placeAnimalOnMap(savedAnimal);
+      const bonusLvl = document.getElementById("levelBonus");
+      bonusLvl.classList.remove("locked");
+      bonusLvl.classList.add("done");
+    }
+  const starsPlaced = localStorage.getItem("starsPlaced");
+  if (starsPlaced === "true")
+  {
+    placeStarsOnMap();
+  }
 }
 
 // Call it once after defining levels
@@ -354,119 +375,161 @@ function placeStarsOnMap() {
     localStorage.setItem("starsPlaced", "true");
 }
 
+// --- Generate 20 unique mixed questions evenly from tables 3–9 ---
+// Avoids duplicates and reversed duplicates (e.g. 7×4 vs 4×7)
+function getFinalTestQuestions() {
+  const uniquePairs = new Set();
+  const allQuestions = [];
+
+  for (let a = 3; a <= 9; a++) {
+    for (let b = 3; b <= 9; b++) {
+      // create a normalized key so (4,7) == (7,4)
+      const key = [Math.min(a, b), Math.max(a, b)].join('×');
+      if (!uniquePairs.has(key)) {
+        uniquePairs.add(key);
+        allQuestions.push({
+          q: `${a} · ${b} =`,
+          a: String(a * b)
+        });
+      }
+    }
+  }
+
+  // shuffle all unique combinations
+  shuffleArray(allQuestions);
+
+  // pick first 20 for the final test
+  return allQuestions.slice(0, 20);
+}
+
+
+
+
 function startQuiz() {
-  const levelNumber = currentLevel + 1; // 1-indexed
+  const currentElement = levels[currentLevel]; // current level DOM element
+  let questions;
 
-  const questions = questionsByLevel[currentLevel].slice(); // copy to avoid mutation
+  // --- Select questions ---
+  if (currentElement.id === "level8") {
+    // Final test: 20 unique questions from 3–9 tables
+    questions = getFinalTestQuestions();
+  } else {
+    // Regular level
+    questions = questionsByLevel[currentLevel].slice(); // copy to avoid mutation
+  }
 
-  // optionally shuffle
-  if (RANDOMIZE_QUESTIONS) questions.sort(() => 0.5 - Math.random());
+  // Optionally shuffle
+  if (RANDOMIZE_QUESTIONS) shuffleArray(questions);
 
-    // Build the form HTML
-  let quizHTML = "<form id='quizForm' class='quiz-grid'>";
+  // --- Build quiz HTML ---
+  let quizHTML;
+  if (currentElement.id === "level8") {
+    // Final test: 4 columns
+    quizHTML = "<form id='quizForm'><div class='quiz-grid-final'>";
+  } else {
+    // Regular levels: 1 column
+    quizHTML = "<form id='quizForm'><div class='quiz-grid-single'>";
+  }
+
   questions.forEach((q, i) => {
     quizHTML += `
       <div class="quiz-item">
-        <label>${q.q}</label>
-        <input type="text" name="q${i}" data-answer="${q.a}" maxlength="3" class="swal2-input quiz-input" required>
+        <label class="quiz-question">${q.q}</label>
+        <input type="text" name="q${i}" data-answer="${q.a}" maxlength="3" class="quiz-input" required>
       </div>
     `;
   });
-  quizHTML += "</form>";
 
-const firstQuestion = questionsByLevel[currentLevel][0].q;
-const tableNumber = parseInt(firstQuestion.split("·")[0].trim());
-  // Show SweetAlert2 quiz popup
+  quizHTML += "</div></form>";
+
+  // --- Title and instruction text ---
+  let titleText = currentElement.id === "level8" ? "Finaltest 🏁" : `Tabell ${questionsByLevel[currentLevel][0].q.split("·")[0].trim()}`;
+  let instructionText = currentElement.id === "level8" ? "Du behöver 18 rätt för att klara nivån." : "Du behöver 5 rätt för att klara nivån.";
+
+  // --- Show SweetAlert2 quiz popup ---
   Swal.fire({
-title: `Tabell ${tableNumber}`,
-    html: quizHTML,
+    title: titleText,
+    html: `
+      <p style="margin-top:-5px; font-size: 0.95em; color: #555;">${instructionText}</p>
+      ${quizHTML}
+    `,
     focusConfirm: false,
     showCancelButton: true,
-    allowOutsideClick: false, //prevent closing popup when clicking outside
-    allowEscapeKey: false,  //prevent closing popup when using escape
+    allowOutsideClick: false,
+    allowEscapeKey: false,
     confirmButtonText: "Rätta",
     cancelButtonText: 'Avbryt',
-    width: '35%',  
-    customClass: {
-    popup: 'quiz-popup'
-  },
+    width: currentElement.id === "level8" ? '60%' : '40%',
+    customClass: { popup: 'quiz-popup' },
+    preConfirm: () => {
+      const inputs = Swal.getHtmlContainer().querySelectorAll("input[data-answer]");
+      const answers = [];
+      let correctCount = 0;
 
-  preConfirm: () => {
-  const inputs = Swal.getHtmlContainer().querySelectorAll("input[data-answer]");
-  const answers = [];
-  let correctCount = 0;
+      inputs.forEach(inp => {
+        const user = inp.value.trim();
+        const correct = inp.dataset.answer.trim();
+        const isCorrect = user === correct;
+        answers.push({ q: inp.previousElementSibling.textContent, user, correct, isCorrect });
+        if (isCorrect) correctCount++;
+      });
 
-  inputs.forEach(inp => {
-    const user = inp.value.trim();
-    const correct = inp.dataset.answer.trim();
-    const isCorrect = user === correct;
-    answers.push({ q: inp.previousElementSibling.textContent, user, correct, isCorrect });
-    if (isCorrect) correctCount++;
-  });
-
-  // return all info, not just the score
-  return { score: correctCount / inputs.length, answers };
-}
-}).then(result => {
-  if (!result.isConfirmed) return;
-
-  const { score, answers } = result.value;
-  const passed = score >= 0.75;
-  const level = levels[currentLevel];
-  const isAlreadyDone = level.classList.contains('done');
-
-  // Filter to show only wrong answers
-  const wrongAnswers = answers.filter(a => !a.isCorrect);
-
-  // Build HTML feedback list (only wrong ones)
-  let feedbackHTML = "";
-  if (wrongAnswers.length === 0) {
-    feedbackHTML = "<p>Alla svar var rätt! 🎉</p>";
-  } else {
-    feedbackHTML = "<div class='feedback-list'><p>Kom ihåg till nästa gång:</p>";
-    wrongAnswers.forEach(a => {
-      feedbackHTML += `
-        <div>
-          ${a.q} 
-          <b style="color:green">${a.correct}</b>
-        </div>`;
-    });
-    feedbackHTML += "</div>";
-  }
-
-  // Use your motivational text with feedback below it
-  let title = passed ? "Snyggt jobbat!" : "Testa igen!";
-  
-  const isLastLevel = currentLevel === levels.length -1;
-
-
-  let text; 
-  if (passed) {
-    if (isLastLevel) {
-    text = "🎉 Du har klarat hela spelet! Grattis!";
-    placeStarsOnMap(); // add stars to background
-    } else if (isAlreadyDone) {
-      text = "Du klarade nivån igen.";
-    } else {
-      text = "Du har låst upp en ny nivå.";
+      return { answers, correctCount };
     }
-  } else {
-    text = "Inte riktigt där än.";
-  }
+  }).then(result => {
+    if (!result.isConfirmed) return;
 
-  Swal.fire({
-    title,
-    html: `<p>${text}</p><hr>${feedbackHTML}`,
-    icon: passed ? "success" : "question",
-    confirmButtonText: passed ? "OK" : "OK",
-    width: "60%",
-    allowOutsideClick: false
-  }).then(() => {
-    if (passed && !isAlreadyDone) completeLevel(currentLevel);
-  });
+    const { answers, correctCount } = result.value;
+
+    // --- Determine passing threshold ---
+    const requiredCorrect = currentElement.id === "level8" ? 18 : 5;
+    const passed = correctCount >= requiredCorrect;
+
+    const level = levels[currentLevel];
+    const isAlreadyDone = level.classList.contains('done');
+
+    // --- Feedback HTML for wrong answers ---
+    const wrongAnswers = answers.filter(a => !a.isCorrect);
+    let feedbackHTML = "";
+    if (wrongAnswers.length === 0) {
+      feedbackHTML = "<p>Alla svar var rätt! 🎉</p>";
+    } else {
+      feedbackHTML = "<div class='feedback-list'><p>Kom ihåg till nästa gång:</p>";
+      wrongAnswers.forEach(a => {
+        feedbackHTML += `<div>${a.q} <b style="color:green">${a.correct}</b></div>`;
+      });
+      feedbackHTML += "</div>";
+    }
+
+    // --- Motivational text ---
+    let text;
+    if (passed) {
+      if (currentElement.id === "level8") {
+        text = "🎉 Du klarade finaltestet! Fantastiskt jobbat!";
+        placeStarsOnMap();
+      } else if (isAlreadyDone) {
+        text = "Du klarade nivån igen.";
+      } else {
+        text = "Du har låst upp en ny nivå.";
+      }
+    } else {
+      text = "Inte riktigt där än.";
+    }
+
+    Swal.fire({
+  title: passed ? "Snyggt jobbat!" : "Testa igen!",
+  html: `<p>${text}</p><hr>${feedbackHTML}`,
+  icon: passed ? "success" : "question",
+  confirmButtonText: "OK",
+  width: currentElement.id === "level8" ? '60%' : '40%',
+  allowOutsideClick: false
+}).then(() => {
+  if (passed && !isAlreadyDone) completeLevel(currentLevel);
 });
 
+  });
 }
+
 
 
 // Cheat: fill answers when a key combo is pressed
