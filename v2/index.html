@@ -135,6 +135,8 @@
 <script>
 const levels = document.querySelectorAll('.level');
 
+const FINAL_TEST_BEST_TIME_KEY = "finalTestBestTime";
+
 const animals = {
   "Hund": "🐶",
   "Katt": "🐱",
@@ -407,11 +409,15 @@ function startQuiz() {
   // Optionally shuffle
   if (RANDOMIZE_QUESTIONS) shuffleArray(questions);
 
-  // --- Build quiz HTML ---
+    // --- Build quiz HTML ---
   let quizHTML;
   if (currentElement.id === "level8") {
-    // Final test: 4 columns
-    quizHTML = "<form id='quizForm'><div class='quiz-grid-final'>";
+    // Final test: 4 columns + timer
+    quizHTML = `
+      <div style="margin-bottom:10px; font-weight:bold;">
+        Tid kvar: <span id="finalTestTimer">03:00</span>
+      </div>
+      <form id='quizForm'><div class='quiz-grid-final'>`;
   } else {
     // Regular levels: 1 column
     quizHTML = "<form id='quizForm'><div class='quiz-grid-single'>";
@@ -432,6 +438,10 @@ function startQuiz() {
   let titleText = currentElement.id === "level8" ? "Finaltest 🏁" : `Tabell ${questionsByLevel[currentLevel][0].q.split("·")[0].trim()}`;
   let instructionText = currentElement.id === "level8" ? "Du behöver 18 rätt för att klara nivån." : "Du behöver 5 rätt för att klara nivån.";
 
+  // --- Timer setup for final test ---
+  let timeRemaining = 3 * 60; // 3 minutes in seconds
+  let timerInterval;
+
   // --- Show SweetAlert2 quiz popup ---
   Swal.fire({
     title: titleText,
@@ -447,6 +457,30 @@ function startQuiz() {
     cancelButtonText: 'Avbryt',
     width: currentElement.id === "level8" ? '60%' : '40%',
     customClass: { popup: 'quiz-popup' },
+        didOpen: () => {
+      // Start timer if final test
+      if (currentElement.id === "level8") {
+        const timerEl = Swal.getHtmlContainer()?.querySelector("#finalTestTimer");
+        timerInterval = setInterval(() => {
+          timeRemaining--;
+          const min = Math.floor(timeRemaining / 60).toString().padStart(2,'0');
+          const sec = (timeRemaining % 60).toString().padStart(2,'0');
+          if (timerEl) timerEl.textContent = `${min}:${sec}`;
+
+          if (timeRemaining <= 0) {
+            clearInterval(timerInterval);
+            Swal.close();
+            Swal.fire({
+              title: "Testa igen!",
+              html: "Tiden är ute.",
+              icon: "question",
+              confirmButtonText: "OK",
+              width: '60%'
+            });
+          }
+        }, 1000);
+      }
+    },
     preConfirm: () => {
       const inputs = Swal.getHtmlContainer().querySelectorAll("input[data-answer]");
       const answers = [];
@@ -463,9 +497,13 @@ function startQuiz() {
       return { answers, correctCount };
     }
   }).then(result => {
-    if (!result.isConfirmed) return;
-
+    if (!result.isConfirmed) {
+          if (currentElement.id === "level8") clearInterval(timerInterval);
+    return;
+    }
     const { answers, correctCount } = result.value;
+    // --- Stop timer ---
+    if (currentElement.id === "level8") clearInterval(timerInterval);
 
     // --- Determine passing threshold ---
     const requiredCorrect = currentElement.id === "level8" ? 18 : 5;
@@ -474,37 +512,61 @@ function startQuiz() {
     const level = levels[currentLevel];
     const isAlreadyDone = level.classList.contains('done');
 
-    // --- Feedback HTML for wrong answers ---
-    const wrongAnswers = answers.filter(a => !a.isCorrect);
-    let feedbackHTML = "";
-    if (wrongAnswers.length === 0) {
-      feedbackHTML = "<p>Alla svar var rätt! 🎉</p>";
-    } else {
-      feedbackHTML = "<div class='feedback-list'><p>Kom ihåg till nästa gång:</p>";
-      wrongAnswers.forEach(a => {
-        feedbackHTML += `<div>${a.q} <b style="color:green">${a.correct}</b></div>`;
-      });
-      feedbackHTML += "</div>";
-    }
+    let popupTitle = passed ? "Snyggt jobbat!" : "Testa igen!";
+let textBody = "";       // Motivational message
+let feedbackHTML = "";   // Feedback section
 
-    // --- Motivational text ---
-    let text;
-    if (passed) {
-      if (currentElement.id === "level8") {
-        text = "🎉 Du klarade finaltestet! Fantastiskt jobbat!";
-        placeStarsOnMap();
-      } else if (isAlreadyDone) {
-        text = "Du klarade nivån igen.";
+const wrongAnswers = answers.filter(a => !a.isCorrect);
+
+// --- Determine motivational text first ---
+if (passed) {
+  if (currentElement.id === "level8") {
+    // Final test
+    const timeUsed = 3*60 - timeRemaining;
+    const previousBest = localStorage.getItem("finalTestBestTime");
+
+    if (!previousBest) {
+      textBody = "🎉 Du har klarat hela spelet! Grattis!"; // First pass
+      localStorage.setItem("finalTestBestTime", timeUsed);
+    } else {
+      const bestTime = parseInt(previousBest);
+      if (timeUsed < bestTime) {
+        textBody = `🎉 Du klarade finaltestet igen, ${bestTime - timeUsed} sekunder snabbare än ditt rekord!`;
+        localStorage.setItem("finalTestBestTime", timeUsed);
+      } else if (timeUsed === bestTime) {
+        textBody = "🎉 Du klarade finaltestet igen, på samma tid som ditt rekord!";
       } else {
-        text = "Du har låst upp en ny nivå.";
+        textBody = `🎉 Du klarade finaltestet igen!`;
       }
-    } else {
-      text = "Inte riktigt där än.";
     }
+    placeStarsOnMap();
 
-    Swal.fire({
-  title: passed ? "Snyggt jobbat!" : "Testa igen!",
-  html: `<p>${text}</p><hr>${feedbackHTML}`,
+  } else if (isAlreadyDone) {
+    // Normal level already done
+    textBody = "Du klarade nivån igen.";
+  } else {
+    // Normal level first pass
+    textBody = "Du har låst upp en ny nivå.";
+  }
+
+} else {
+  // Did not pass
+  textBody = "Inte riktigt där än.";
+}
+
+// --- Build feedback separately ---
+if (wrongAnswers.length === 0) {
+  feedbackHTML = "<p>Alla rätt! 🎉</p>";
+} else {
+  feedbackHTML = "<div class='feedback-list'><p>Tänk på till nästa gång:</p>" +
+    wrongAnswers.map(a => `<div>${a.q} <b style="color:green">${a.correct}</b></div>`).join("") +
+    "</div>";
+}
+
+// --- Show popup ---
+Swal.fire({
+  title: popupTitle,
+  html: `<p>${textBody}</p><hr>${feedbackHTML}`,
   icon: passed ? "success" : "question",
   confirmButtonText: "OK",
   width: currentElement.id === "level8" ? '60%' : '40%',
@@ -587,6 +649,7 @@ function startQuiz() {
 localStorage.removeItem('levelProgress'); 
 localStorage.removeItem('bonusAnimal');
 localStorage.removeItem('starsPlaced');
+localStorage.removeItem('finalTestBestTime');
 location.reload();
 " style="
 position:fixed; 
