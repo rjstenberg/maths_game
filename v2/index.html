@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Multiplikation tabell 3-9</title>
+  <title>Maths gamification</title>
   <style>
     body {
       margin: 0;
@@ -41,11 +41,11 @@
       cursor: pointer;
     }
 
-  .locked { background-color: red; cursor: not-allowed; }
-  .open   { background-color: blue; }
-  .done   { background-color: green; }
+    .locked { background-color: red; cursor: not-allowed; }
+    .open   { background-color: blue; }
+    .done   { background-color: green; }
 
-.quiz-row {
+    .quiz-row {
   display: flex;
   gap: 20px; /* space between columns */
 }
@@ -55,49 +55,23 @@
   flex: 1;
 }
 
-/* Shared grid layouts */
-.quiz-grid-single {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 8px 0;
-  justify-items: center;
-  align-items: center;
-}
-
-.quiz-grid-final {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px 20px;
-  justify-items: center;
-  align-items: center;
-}
-
-/* Each question+input pair */
 .quiz-item {
   display: flex;
-  justify-content: center;  /* centers the entire pair */
   align-items: center;
-  gap: 8px;
-  width: 100%;
-  text-align: center;
+  gap: 6px;           /* space between question text and input */
+  margin-bottom: 4px; /* space between rows */
 }
 
-/* The question label */
 .quiz-question {
+  min-width: 70px;    /* enough for '10 · 12 =' etc. */
   text-align: right;
-  font-weight: 500;
-  font-size: 1rem;
-  min-width: 60px;          /* keep compact width */
+    display: inline-block; /* ensures consistent width */
 }
 
-/* The input field */
 .quiz-input {
-  width: 3em !important;
-  text-align: center;
-  padding: 4px 6px;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  width: 40px;        /* space for up to 3 digits */
+  padding: 4px;
+  font-size: 14px;
 }
 
 .star-icon {
@@ -120,53 +94,35 @@
     <img src="map.png" alt="Map">
 
     <!-- Example levels -->
-    <div id="level1" class="level open" style="top: 6.6%; left: 23.9%;">3</div>
-    <div id="level2" class="level locked" style="top: 6.6%; left: 51.7%;">4</div>
-    <div id="level3" class="level locked" style="top: 6.6%; left: 66.1%;">5</div> <!-- Optional level -->
-    <div id="level4" class="level locked" style="top: 26.7%; left: 66.2%;">6</div> <!-- Optional level -->
-    <div id="levelBonus" class="level locked bonus" style="top: 18%; left: 86%; border-radius: 50%; width:5% ;">⭐</div>    <!-- Bonus level -->
-    <div id="level5" class="level locked" style="top: 46.5%; left: 38.5%;">7</div>
-    <div id="level6" class="level locked" style="top: 86.1%; left: 24%;">8</div>
-    <div id="level7" class="level locked" style="top: 86.1%; left: 51.8%;">9</div>
-    <div id="level8" class="level locked" style="top: 71.4%; left: 76.7%;">🔥</div>
-
+    <div id="level1" class="level open" style="top: 6.6%; left: 23.9%;">1</div>
+    <div id="level2" class="level locked" style="top: 6.6%; left: 51.7%;">2</div>
+    <div id="level3" class="level locked" style="top: 6.6%; left: 66.1%;">3</div>
+    <div id="level4" class="level locked" style="top: 26.7%; left: 66.2%;">4</div>
+    <div id="levelBonus" class="level locked bonus" style="top: 43%; left: 57%; border-radius: 50%; width:5% ;">⭐</div>    <!-- Bonus level -->
+    <div id="level5" class="level locked" style="top: 86.1%; left: 24%;">5</div>
+    <div id="level6" class="level locked" style="top: 86.1%; left: 51.8%;">6</div>
+    <div id="level7" class="level locked" style="top: 71.4%; left: 78%;">7</div>
   </div>
 
-<script>
-const levels = document.querySelectorAll('.level');
+  <script>
+    const levels = document.querySelectorAll('.level');
+    function loadProgress() {
+  const stored = localStorage.getItem('levelProgress');
+  if (!stored) return; // no saved progress
 
-const FINAL_TEST_BEST_TIME_KEY = "finalTestBestTime";
+  const progress = JSON.parse(stored);
+  levels.forEach((lvl, idx) => {
+    lvl.classList.remove('locked','open','done');
+    lvl.classList.add(progress[idx] || 'locked');
+  });
+  const savedAnimal = localStorage.getItem("bonusAnimal");
+if (savedAnimal) {
+  placeAnimalOnMap(savedAnimal);
+  const bonusLvl = document.getElementById("levelBonus");
+  bonusLvl.classList.remove("locked");
+  bonusLvl.classList.add("done");
+}
 
-const animals = {
-  "Hund": "🐶",
-  "Katt": "🐱",
-  "Hamster": "🐹",
-  "Kanin": "🐰",
-  "Gris": "🐷",
-  "Fjäril": "🦋"
-};
-
-function loadProgress() {
-    const stored = localStorage.getItem('levelProgress');
-    if (!stored) return; // no saved progress
-
-    const progress = JSON.parse(stored);
-    levels.forEach((lvl, idx) => {
-      lvl.classList.remove('locked','open','done');
-      lvl.classList.add(progress[idx] || 'locked');
-    });
-    const savedAnimal = localStorage.getItem("bonusAnimal");
-    if (savedAnimal) {
-      placeAnimalOnMap(savedAnimal);
-      const bonusLvl = document.getElementById("levelBonus");
-      bonusLvl.classList.remove("locked");
-      bonusLvl.classList.add("done");
-    }
-  const starsPlaced = localStorage.getItem("starsPlaced");
-  if (starsPlaced === "true")
-  {
-    placeStarsOnMap();
-  }
 }
 
 // Call it once after defining levels
@@ -174,26 +130,35 @@ loadProgress();
 
     let currentLevel = null;
     // Toggle: set true to shuffle questions for each level, false to keep original order
-    const RANDOMIZE_QUESTIONS = true;
+    const RANDOMIZE_QUESTIONS = false;
 
-  // create levels 3–9 (each with 3×3 .. 9×9)
-const questionsByLevel = [];
+    const questionsByLevel = [
+  [ // Level 1
+    { q: "5 + 3 = ?", a: "8" },
+    { q: "2 + 6 = ?", a: "8" },
+    { q: "4 + 4 = ?", a: "8" },
+    { q: "1 + 7 = ?", a: "8" }
+  ],
+  [ // Level 2
+    { q: "10 - 4 = ?", a: "6" },
+    { q: "12 - 5 = ?", a: "7" },
+    { q: "9 - 3 = ?", a: "6" },
+    { q: "8 - 2 = ?", a: "6" }
+  ],
+  [ // Level 3
+    { q: "3 × 3 = ?", a: "9" },
+    { q: "4 × 2 = ?", a: "8" },
+    { q: "5 × 2 = ?", a: "10" },
+    { q: "6 × 1 = ?", a: "6" }
+  ]
+];
 
-for (let table = 3; table <= 10; table++) {
-  const levelQuestions = [];
-  for (let i = 3; i <= 9; i++) {
-    levelQuestions.push({
-      q: `${table} · ${i} =`,
-      a: String(table * i)
-    });
-  }
-  questionsByLevel.push(levelQuestions);
-
-  // duplicate table 7
-  if (table === 7) {
-    questionsByLevel.push([...levelQuestions]);
-  }
-}
+// Optional fallback if a level has no questions
+const defaultQuestionBank = [
+  { q: "5 + 3 = ?", a: "8" },
+  { q: "10 - 4 = ?", a: "6" },
+  { q: "3 × 3 = ?", a: "9" }
+];
 
 function shuffleArray(arr) {
   // in-place shuffle
@@ -222,31 +187,17 @@ function completeLevel(idx) {
   lvl.classList.remove('open');
   lvl.classList.add('done');
 
-  const next = levels[idx+1];
-
-  // special rule
-  if (lvl.id == "level2") {
-    document.getElementById("level3").classList.remove('locked');
-    document.getElementById("level3").classList.add('open');
-
-    document.getElementById("level4").classList.remove('locked');
-    document.getElementById("level4").classList.add('open');
-
-    document.getElementById("level5").classList.remove('locked');
-    document.getElementById("level5").classList.add('open');
+  //check if level 4 is completed, unlock bonus level
+  if (lvl.id == "level4") {
+    //document.getElementById("levelBonus").classList.remove('locked');
+    //document.getElementById("levelBonus").classList.add('open');
+    levels[idx + 2].classList.remove('locked');
+    levels[idx + 2].classList.add('open');
   }
-  else if (lvl.id === "level3" || lvl.id === "level4")
-  {
-    const bonus = document.getElementById("levelBonus");
-    if (bonus.classList.contains("locked")) {
-      bonus.classList.remove("locked");
-      bonus.classList.add("open");
-    }
-  }
-  else if (next) 
-  { 
-    next.classList.remove('locked');
-    next.classList.add('open');
+  // unlock next
+  if (levels[idx + 1]) { 
+    levels[idx + 1].classList.remove('locked');
+    levels[idx + 1].classList.add('open');
   }
 
   // Save progress to localStorage
@@ -254,32 +205,49 @@ function completeLevel(idx) {
 }
 
 function saveProgress() {
-  //Each level's state
   const progress = Array.from(levels).map(lvl => {
     if (lvl.classList.contains('done')) return 'done';
     if (lvl.classList.contains('open')) return 'open';
     return 'locked';
   });
   localStorage.setItem('levelProgress', JSON.stringify(progress));
-
-  //Placed animal
-    const animalIcon = document.querySelector('.animal-icon');
-  if (animalIcon) {
-    // Find the emoji -> convert back to animal name if possible
-    const emoji = animalIcon.textContent.trim();
-    const animalName = animals[emoji] || emoji;
-const savedAnimal = localStorage.getItem("bonusAnimal");
-if (savedAnimal && animals[savedAnimal]) {
-  placeAnimalOnMap(savedAnimal, false);
-}  }
-
-  // --- Save stars if they exist ---
-  const starsPlaced = document.querySelectorAll('.star-icon').length > 0;
-  localStorage.setItem('starsPlaced', starsPlaced ? 'true' : 'false');
 }
 
+function generateMultiplicationQuestions(levelNum) {
+  const questions = [];
+  let startTable, endTable;
+
+  if (levelNum === 1) {
+    startTable = 1; endTable = 6;
+  } else if (levelNum === 2) {
+    startTable = 7; endTable = 12;
+  } else {
+    // fallback: levelNum tables starting at 1
+    startTable = 1; endTable = 6;
+  }
+
+  for (let i = startTable; i <= endTable; i++) {
+    for (let j = 0; j <= 10; j++) {
+      questions.push({
+        q: `${j} · ${i} = ?`,
+        a: (i * j).toString()
+      });
+    }
+  }
+
+  return questions;
+}
 
 function openAnimalSelector() {
+  const animals = {
+    "Hund": "🐶",
+    "Katt": "🐱",
+    "Hamster": "🐹",
+    "Kanin": "🐰",
+    "Gris": "🐷",
+    "Fjäril": "🦋"
+  };
+
   const selectHTML = `
     <select id="animalSelect" class="swal2-select">
       <option value="" disabled selected>Välj ett djur</option>
@@ -309,12 +277,33 @@ function openAnimalSelector() {
     saveProgress?.();
   });
 }
-function placeAnimalOnMap(type, save = true) {
+function placeAnimalOnMap(type, save = false) {
+  const animals = {
+    "Hund": "🐶",
+    "Katt": "🐱",
+    "Hamster": "🐹",
+    "Kanin": "🐰",
+    "Gris": "🐷",
+    "Fjäril": "🦋"
+  };
+
+
+  /*const positions = {
+    "dog": { top: "70%", left: "20%" },
+    "cat": { top: "40%", left: "60%" },
+    "frog": { top: "80%", left: "75%" },
+    "bird": { top: "25%", left: "30%" },
+    "fish": { top: "50%", left: "50%" }
+  };*/
+
   // Remove any existing animal icon before placing a new one
   const oldIcon = document.querySelector(".animal-icon");
   if (oldIcon) oldIcon.remove();
 
   const pos = {top: "53%", left: "15%"};
+
+  //const pos = positions[type];
+  //if (!pos) return;
 
   const icon = document.createElement("div");
   icon.classList.add("animal-icon");
@@ -363,221 +352,175 @@ function placeStarsOnMap() {
     localStorage.setItem("starsPlaced", "true");
 }
 
-// --- Generate 20 unique mixed questions evenly from tables 3–9 ---
-// Avoids duplicates and reversed duplicates (e.g. 7×4 vs 4×7)
-function getFinalTestQuestions() {
-  const uniquePairs = new Set();
-  const allQuestions = [];
-
-  for (let a = 3; a <= 9; a++) {
-    for (let b = 3; b <= 9; b++) {
-      // create a normalized key so (4,7) == (7,4)
-      const key = [Math.min(a, b), Math.max(a, b)].join('×');
-      if (!uniquePairs.has(key)) {
-        uniquePairs.add(key);
-        allQuestions.push({
-          q: `${a} · ${b} =`,
-          a: String(a * b)
-        });
-      }
-    }
-  }
-
-  // shuffle all unique combinations
-  shuffleArray(allQuestions);
-
-  // pick first 20 for the final test
-  return allQuestions.slice(0, 20);
-}
-
-
-
 
 function startQuiz() {
-  const currentElement = levels[currentLevel]; // current level DOM element
-  let questions;
+  const levelNumber = currentLevel + 1; // 1-indexed
 
-  // --- Select questions ---
-  if (currentElement.id === "level8") {
-    // Final test: 20 unique questions from 3–9 tables
-    questions = getFinalTestQuestions();
-  } else {
-    // Regular level
-    questions = questionsByLevel[currentLevel].slice(); // copy to avoid mutation
+  // Generate questions per level
+  function generateMultiplicationQuestions(levelNum) {
+    const questions = [];
+    let startTable, endTable;
+
+    if (levelNum === 1) {
+      startTable = 1; endTable = 6;
+    } else if (levelNum === 2) {
+      startTable = 7; endTable = 12;
+    } else {
+      startTable = 1; endTable = 6; // fallback
+    }
+
+    for (let i = startTable; i <= endTable; i++) {
+      for (let j = 0; j <= 10; j++) {
+        questions.push({ q: `${j} · ${i} = ?`, a: (i * j).toString() });
+      }
+    }
+    return questions;
   }
 
-  // Optionally shuffle
-  if (RANDOMIZE_QUESTIONS) shuffleArray(questions);
+  let questions = generateMultiplicationQuestions(levelNumber);
 
-    // --- Build quiz HTML ---
-  let quizHTML;
-  if (currentElement.id === "level8") {
-    // Final test: 4 columns + timer
-    quizHTML = `
-      <div style="margin-bottom:10px; font-weight:bold;">
-        Tid kvar: <span id="finalTestTimer">03:00</span>
-      </div>
-      <form id='quizForm'><div class='quiz-grid-final'>`;
-  } else {
-    // Regular levels: 1 column
-    quizHTML = "<form id='quizForm'><div class='quiz-grid-single'>";
+  // optionally shuffle
+  if (RANDOMIZE_QUESTIONS) questions.sort(() => 0.5 - Math.random());
+
+  // Build multi-column HTML
+  function buildQuizHTML(questions, tablesPerRow = 3) {
+    // Group by table number
+    const tables = {};
+    questions.forEach(q => {
+      const tableNum = parseInt(q.q.split('·')[1].trim());
+      if (!tables[tableNum]) tables[tableNum] = [];
+      tables[tableNum].push(q);
+    });
+
+    const tableNums = Object.keys(tables).map(Number).sort((a,b) => a-b);
+
+    let html = '<div class="quiz-grid">';
+    for (let i = 0; i < tableNums.length; i += tablesPerRow) {
+      html += '<div class="quiz-row">';
+      const group = tableNums.slice(i, i + tablesPerRow);
+      group.forEach(tNum => {
+        html += '<div class="quiz-col">';
+       tables[tNum].forEach(q => {
+  html += `
+    <div class="quiz-item">
+      <span class="quiz-question">${q.q.replace('?', '')}</span>
+      <input type="text" name="q${q.q}" data-answer="${q.a}" class="quiz-input" required>
+    </div>
+  `;
+});
+
+        html += '</div>'; // end quiz-col
+      });
+      html += '</div><br>'; // end row + space
+    }
+    html += '</div>';
+    return html;
   }
 
-  questions.forEach((q, i) => {
-    quizHTML += `
-      <div class="quiz-item">
-        <label class="quiz-question">${q.q}</label>
-        <input type="text" name="q${i}" data-answer="${q.a}" maxlength="3" class="quiz-input" required>
-      </div>
-    `;
-  });
+  const quizHTML = buildQuizHTML(questions, 3);
 
-  quizHTML += "</div></form>";
-
-  // --- Title and instruction text ---
-  let titleText = currentElement.id === "level8" ? "Finaltest 🏁" : `Tabell ${questionsByLevel[currentLevel][0].q.split("·")[0].trim()}`;
-  let instructionText = currentElement.id === "level8" ? "Du behöver 18 rätt för att klara nivån." : "Du behöver 5 rätt för att klara nivån.";
-
-  // --- Timer setup for final test ---
-  let timeRemaining = 3 * 60; // 3 minutes in seconds
-  let timerInterval;
-
-  // --- Show SweetAlert2 quiz popup ---
+  // Show SweetAlert2 quiz popup
   Swal.fire({
-    title: titleText,
-    html: `
-      <p style="margin-top:-5px; font-size: 0.95em; color: #555;">${instructionText}</p>
-      ${quizHTML}
-    `,
+    title: `Nivå ${levelNumber}`,
+    html: quizHTML,
     focusConfirm: false,
     showCancelButton: true,
     allowOutsideClick: false,
-    allowEscapeKey: false,
     confirmButtonText: "Rätta",
     cancelButtonText: 'Avbryt',
-    width: currentElement.id === "level8" ? '60%' : '40%',
-    customClass: { popup: 'quiz-popup' },
-        didOpen: () => {
-      // Start timer if final test
-      if (currentElement.id === "level8") {
-        const timerEl = Swal.getHtmlContainer()?.querySelector("#finalTestTimer");
-        timerInterval = setInterval(() => {
-          timeRemaining--;
-          const min = Math.floor(timeRemaining / 60).toString().padStart(2,'0');
-          const sec = (timeRemaining % 60).toString().padStart(2,'0');
-          if (timerEl) timerEl.textContent = `${min}:${sec}`;
 
-          if (timeRemaining <= 0) {
-            clearInterval(timerInterval);
-            Swal.close();
-            Swal.fire({
-              title: "Testa igen!",
-              html: "Tiden är ute.",
-              icon: "question",
-              confirmButtonText: "OK",
-              width: '60%'
-            });
-          }
-        }, 1000);
-      }
-    },
-    preConfirm: () => {
-      const inputs = Swal.getHtmlContainer().querySelectorAll("input[data-answer]");
-      const answers = [];
-      let correctCount = 0;
+      width: '70%',           // wider than default
+  customClass: {
+    popup: 'quiz-popup'
+  },
 
-      inputs.forEach(inp => {
-        const user = inp.value.trim();
-        const correct = inp.dataset.answer.trim();
-        const isCorrect = user === correct;
-        answers.push({ q: inp.previousElementSibling.textContent, user, correct, isCorrect });
-        if (isCorrect) correctCount++;
-      });
+  preConfirm: () => {
+  const inputs = Swal.getHtmlContainer().querySelectorAll("input[data-answer]");
+  const answers = [];
+  let correctCount = 0;
 
-      return { answers, correctCount };
-    }
-  }).then(result => {
-    if (!result.isConfirmed) {
-          if (currentElement.id === "level8") clearInterval(timerInterval);
-    return;
-    }
-    const { answers, correctCount } = result.value;
-    // --- Stop timer ---
-    if (currentElement.id === "level8") clearInterval(timerInterval);
+  inputs.forEach(inp => {
+    const user = inp.value.trim();
+    const correct = inp.dataset.answer.trim();
+    const isCorrect = user === correct;
+    answers.push({ q: inp.previousElementSibling.textContent, user, correct, isCorrect });
+    if (isCorrect) correctCount++;
+  });
 
-    // --- Determine passing threshold ---
-    const requiredCorrect = currentElement.id === "level8" ? 18 : 5;
-    const passed = correctCount >= requiredCorrect;
+  // return all info, not just the score
+  return { score: correctCount / inputs.length, answers };
+}
+}).then(result => {
+  if (!result.isConfirmed) return;
 
-    const level = levels[currentLevel];
-    const isAlreadyDone = level.classList.contains('done');
+  const { score, answers } = result.value;
+  const passed = score >= 0.75;
+  const level = levels[currentLevel];
+  const isAlreadyDone = level.classList.contains('done');
 
-    let popupTitle = passed ? "Snyggt jobbat!" : "Testa igen!";
-let textBody = "";       // Motivational message
-let feedbackHTML = "";   // Feedback section
+  // Filter to show only wrong answers
+  const wrongAnswers = answers.filter(a => !a.isCorrect);
 
-const wrongAnswers = answers.filter(a => !a.isCorrect);
-
-// --- Determine motivational text first ---
-if (passed) {
-  if (currentElement.id === "level8") {
-    // Final test
-    const timeUsed = 3*60 - timeRemaining;
-    const previousBest = localStorage.getItem("finalTestBestTime");
-
-    if (!previousBest) {
-      textBody = "🎉 Du har klarat hela spelet! Grattis!"; // First pass
-      localStorage.setItem("finalTestBestTime", timeUsed);
-    } else {
-      const bestTime = parseInt(previousBest);
-      if (timeUsed < bestTime) {
-        textBody = `🎉 Du klarade finaltestet igen, ${bestTime - timeUsed} sekunder snabbare än ditt rekord!`;
-        localStorage.setItem("finalTestBestTime", timeUsed);
-      } else if (timeUsed === bestTime) {
-        textBody = "🎉 Du klarade finaltestet igen, på samma tid som ditt rekord!";
-      } else {
-        textBody = `🎉 Du klarade finaltestet igen!`;
-      }
-    }
-    placeStarsOnMap();
-
-  } else if (isAlreadyDone) {
-    // Normal level already done
-    textBody = "Du klarade nivån igen.";
+  // Build HTML feedback list (only wrong ones)
+  let feedbackHTML = "";
+  if (wrongAnswers.length === 0) {
+    feedbackHTML = "<p>Alla svar var rätt! 🎉</p>";
   } else {
-    // Normal level first pass
-    textBody = "Du har låst upp en ny nivå.";
+    feedbackHTML = "<div class='feedback-list'><p>Kom ihåg till nästa gång:</p>";
+    wrongAnswers.forEach(a => {
+      feedbackHTML += `
+        <div>
+          ${a.q} 
+          <b style="color:green">${a.correct}</b>
+        </div>`;
+    });
+    feedbackHTML += "</div>";
   }
 
-} else {
-  // Did not pass
-  textBody = "Inte riktigt där än.";
-}
+  // Use your motivational text with feedback below it
+  let title = passed ? "Snyggt jobbat!" : "Testa igen!";
+const isLastLevel = currentLevel === levels.length -1;
 
-// --- Build feedback separately ---
-if (wrongAnswers.length === 0) {
-  feedbackHTML = "<p>Alla rätt! 🎉</p>";
-} else {
-  feedbackHTML = "<div class='feedback-list'><p>Tänk på till nästa gång:</p>" +
-    wrongAnswers.map(a => `<div>${a.q} <b style="color:green">${a.correct}</b></div>`).join("") +
-    "</div>";
-}
 
-// --- Show popup ---
-Swal.fire({
-  title: popupTitle,
-  html: `<p>${textBody}</p><hr>${feedbackHTML}`,
-  icon: passed ? "success" : "question",
-  confirmButtonText: "OK",
-  width: currentElement.id === "level8" ? '60%' : '40%',
-  allowOutsideClick: false
-}).then(() => {
-  if (passed && !isAlreadyDone) completeLevel(currentLevel);
+  let text; 
+  if (passed) {
+    if (isLastLevel) {
+    text = "🎉 Du har klarat hela spelet! Grattis!";
+    placeStarsOnMap(); // add stars to background
+    } else if (isAlreadyDone) {
+      text = "Du klarade nivån igen.";
+    } else {
+      text = "Du har låst upp en ny nivå.";
+    }
+  } else {
+    text = "Inte riktigt där än.";
+  }
+
+  Swal.fire({
+    title,
+    html: `<p>${text}</p><hr>${feedbackHTML}`,
+    icon: passed ? "success" : "question",
+    confirmButtonText: passed ? "OK" : "OK",
+    width: "60%",
+    allowOutsideClick: false
+  }).then(() => {
+    if (passed && !isAlreadyDone) completeLevel(currentLevel);
+  });
 });
 
-  });
+if (isLastLevel && passed) {
+  const starsDiv = document.createElement("div");
+  starsDiv.classList.add("corner-stars");
+  starsDiv.innerHTML = `
+    <span class="star" style="top:0.5rem; left:0.5rem;">⭐</span>
+    <span class="star" style="top:0.5rem; right:0.5rem;">⭐</span>
+    <span class="star" style="bottom:0.5rem; left:0.5rem;">⭐</span>
+    <span class="star" style="bottom:0.5rem; right:0.5rem;">⭐</span>
+  `;
+  document.body.appendChild(starsDiv);
 }
 
+}
 
 
 // Cheat: fill answers when a key combo is pressed
@@ -605,7 +548,6 @@ Swal.fire({
   });
 }
  // Add the Cheat button dynamically
- /*
     const cheatBtn = document.createElement('button');
     cheatBtn.innerText = 'Cheat';
     cheatBtn.style = `
@@ -625,7 +567,7 @@ Swal.fire({
       doCheatFill();
     });
     document.body.appendChild(cheatBtn);
-    */
+    
   // Capture key sequence
   window.addEventListener('keydown', function(e) {
     const keyId = e.code || ('Key' + (e.key || '').toUpperCase());
@@ -649,7 +591,6 @@ Swal.fire({
 localStorage.removeItem('levelProgress'); 
 localStorage.removeItem('bonusAnimal');
 localStorage.removeItem('starsPlaced');
-localStorage.removeItem('finalTestBestTime');
 location.reload();
 " style="
 position:fixed; 
