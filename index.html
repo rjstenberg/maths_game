@@ -391,7 +391,24 @@ function getFinalTestQuestions() {
   return allQuestions.slice(0, 20);
 }
 
+function celebrateConfetti() {
+  const duration = 2 * 1000;
+  const end = Date.now() + duration;
 
+  (function frame() {
+    confetti({
+      particleCount: 6,
+      startVelocity: 30,
+      spread: 360,
+      ticks: 60,
+      scalar: 1.6,  // ← Increase size here (1 = default)
+      origin: { x: Math.random(), y: Math.random() - 0.2 }
+    });
+    if (Date.now() < end) {
+      requestAnimationFrame(frame);
+    }
+  })();
+}
 
 
 function startQuiz() {
@@ -472,7 +489,7 @@ function startQuiz() {
             clearInterval(timerInterval);
             Swal.close();
             Swal.fire({
-              title: "Testa igen!",
+              title: "Bra försök, testa igen!",
               html: "Tiden är ute.",
               icon: "question",
               confirmButtonText: "OK",
@@ -513,7 +530,7 @@ function startQuiz() {
     const level = levels[currentLevel];
     const isAlreadyDone = level.classList.contains('done');
 
-    let popupTitle = passed ? "Snyggt jobbat!" : "Testa igen!";
+    let popupTitle = passed ? "Snyggt jobbat!" : "Bra försök, testa igen!";
 let textBody = "";       // Motivational message
 let feedbackHTML = "";   // Feedback section
 
@@ -529,11 +546,13 @@ if (passed) {
     if (!previousBest) {
       textBody = "🎉 Du har klarat hela spelet! Grattis!"; // First pass
       localStorage.setItem("finalTestBestTime", timeUsed);
+      celebrateConfetti();
     } else {
       const bestTime = parseInt(previousBest);
       if (timeUsed < bestTime) {
         textBody = `🎉 Du klarade finaltestet igen, ${bestTime - timeUsed} sekunder snabbare än ditt rekord!`;
         localStorage.setItem("finalTestBestTime", timeUsed);
+        celebrateConfetti();
       } else if (timeUsed === bestTime) {
         textBody = "🎉 Du klarade finaltestet igen, på samma tid som ditt rekord!";
       } else {
@@ -547,7 +566,11 @@ if (passed) {
     textBody = "Du klarade nivån igen.";
   } else {
     // Normal level first pass
-    textBody = "Du har låst upp en ny nivå.";
+    //if (currentElement.id === "level2" ) {
+     // textBody = "Du har låst upp tre nivåer.";
+    //} else {
+      textBody = "Du har låst upp en ny nivå.";
+    //}
   }
 
 } else {
@@ -658,7 +681,7 @@ bottom:10px;
 right:10px;
 ">Reset Progress
 </button>
-
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
 </body>
 </html>
