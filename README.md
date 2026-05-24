@@ -39,24 +39,25 @@ Currently optimized for desktop/laptop browsers.
   <em>Final challenge with timer.</em>
 </p>
 
-## Game systems
-- Level progression based on multiplication tables 3–9
-- Locked/unlocked map structure inspired by platform game progression
-- Immediate feedback after each attempt
-- Replayable practice levels
-- Final timed challenge combining all tables
-- Small rewards such as stars, animals and confetti
+## Game Systems
+- Progression-based multiplication levels covering tables 3–9
+- Unlockable world map structure inspired by platform game progression
+- Immediate visual and textual feedback after each attempt
+- Replayable practice levels with randomized question order
+- Final timed challenge combining all multiplication tables
+- Small motivational rewards such as stars, animals and confetti
 - Reset functionality for repeated classroom use and testing
 
-## Inspiration and tools
-- Inspired by an original concept from teacher Mathias Andersson for a
-  gamified multiplication game based on the structure of Super Mario Bros
-- Classroom testing, pedagogical feedback and development input were provided
-  by Mathias Andersson and Sophie throughout the project
-- ChatGPT
-  - background image generation
-  - programming and debugging support
-- [SweetAlert2](https://sweetalert2.github.io/)
+## Technical Details
+- Built with HTML, CSS and JavaScript
+- Browser-based responsive UI
+- LocalStorage-based progression and save system
+- SweetAlert2 for in-game feedback and dialogue windows
+
+## Inspiration
+- Based on an original gamification idea by Mathias Andersson
+- Pedagogical input, discussions and classroom feedback provided by teachers Sophie Hansus and Mathias Andersson
+- ChatGPT was used for background image generation, programming support and debugging
 
 ## Educational design
 Spelifiering - Multiplikation på mellanstadiet
