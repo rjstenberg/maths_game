@@ -5,19 +5,42 @@ feedback, autonomy and motivation.
 
 Created by Rebecca Stenberg.
 
-The theoretical foundation and game design concept were developed as part of
-the course "Datorspel och lärande I" at Umeå Universitet.
-The playable implementation was developed independently.
+Originally developed as a theoretical gamification concept for the course
+"Datorspel och lärande I" at Umeå Universitet, and later implemented as a
+fully playable browser game independently.
 
 ## Play it here
 - [rjstenberg.github.io/maths_game/](https://rjstenberg.github.io/maths_game/)
-  
+
+Currently optimized for desktop/laptop browsers.
+
+## Screenshots
+### World map
+![World map](images/world-map.png)
+
+### Multiplication challenge
+![Gameplay](images/gameplay.png)
+
+### Final challenge
+![Final challenge](images/final-challenge.png)
+
+## Game systems
+- Level progression based on multiplication tables 3–9
+- Locked/unlocked map structure inspired by platform game progression
+- Immediate feedback after each attempt
+- Replayable practice levels
+- Final timed challenge combining all tables
+- Small rewards such as stars, animals and confetti
+- Reset functionality for repeated classroom use and testing
+
 ## Inspiration and tools
-- Layout inspired from Super Mario Bros
-- Inspiration and user testing by the teachers Mathias Andersson and Sophie
+- Inspired by an original concept from teacher Mathias Andersson for a
+  gamified multiplication game based on the structure of Super Mario Bros.
+- Classroom testing, pedagogical feedback and development input were provided
+  by Mathias Andersson and Sophie throughout the project.
 - ChatGPT
   - background image generation
-  - coding support
+  - programming and debugging support
 - [SweetAlert2](https://sweetalert2.github.io/)
 
 ## Theory and motivation
