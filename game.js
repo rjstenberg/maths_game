@@ -1,33 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Multiplikation tabell 3-9</title>
-  <link rel="icon" type="image/png" href="assets/favicon.png">
-  <link rel = "stylesheet" href="styles.css">
-  
-  <!-- SweetAlert2 -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-</head>
-<body>
-
-  <div class="map-container">
-    <img src="assets/map.png" alt="Map">
-
-    <!-- Example levels -->
-    <div id="level1" class="level open" style="top: 15%; left: 25%;">3</div>
-    <div id="level2" class="level locked" style="top: 15%; left: 53%;">4</div>
-    <div id="level3" class="level locked" style="top: 10%; left: 75%;">5</div> <!-- Optional level -->
-    <div id="level4" class="level locked" style="top: 36%; left: 67%;">6</div> <!-- Optional level -->
-    <div id="levelBonus" class="level locked bonus" style="top: 20.2%; left: 88.5%; border-radius: 50%; width:6.6% ;">⭐</div>    <!-- Bonus level -->
-    <div id="level5" class="level locked" style="top: 55%; left: 40%;">7</div>
-    <div id="level6" class="level locked" style="top: 86%; left: 23%;">8</div>
-    <div id="level7" class="level locked" style="top: 86%; left: 50%;">9</div>
-    <div id="level8" class="level locked" style="top: 84%; left: 76%;">🔥</div>
-
-  </div>
-
-<script>
 const levels = document.querySelectorAll('.level');
 
 const FINAL_TEST_BEST_TIME_KEY = "finalTestBestTime";
@@ -569,21 +539,3 @@ Swal.fire({
     }
   }, true);
 })();
-
-  </script>
-<button onclick="
-localStorage.removeItem('levelProgress'); 
-localStorage.removeItem('bonusAnimal');
-localStorage.removeItem('starsPlaced');
-localStorage.removeItem('finalTestBestTime');
-location.reload();
-" style="
-position:fixed; 
-bottom:10px; 
-right:10px;
-">Reset Progress
-</button>
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
-
-</body>
-</html>

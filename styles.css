@@ -1,0 +1,104 @@
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      background: #222;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Map container */
+    .map-container {
+      position: relative;
+      width: 80vw;   /* Responsive width */
+      max-width: 1000px;
+    }
+
+    .map-container img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* Levels positioned relative to container */
+    .level {
+      position: absolute;
+      width: 5%;           /* Scale with map */
+      aspect-ratio: 1/1;   /* Keep square */
+      border: 2px solid #000;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+  .locked { background-color: red; cursor: not-allowed; }
+  .open   { background-color: blue; }
+  .done   { background-color: green; }
+
+.quiz-row {
+  display: flex;
+  gap: 20px; /* space between columns */
+}
+.quiz-col {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* Shared grid layouts */
+.quiz-grid-single {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px 0;
+  justify-items: center;
+  align-items: center;
+}
+
+.quiz-grid-final {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px 20px;
+  justify-items: center;
+  align-items: center;
+}
+
+/* Each question+input pair */
+.quiz-item {
+  display: flex;
+  justify-content: center;  /* centers the entire pair */
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  text-align: center;
+}
+
+/* The question label */
+.quiz-question {
+  text-align: right;
+  font-weight: 500;
+  font-size: 1rem;
+  min-width: 60px;          /* keep compact width */
+}
+
+/* The input field */
+.quiz-input {
+  width: 3em !important;
+  text-align: center;
+  padding: 4px 6px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.star-icon {
+  animation: twinkle 1.5s infinite alternate;
+}
+
+@keyframes twinkle {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 0.7; }
+  100% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+}
