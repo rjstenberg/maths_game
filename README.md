@@ -14,20 +14,29 @@ fully playable browser game.
 
 Currently optimized for desktop/laptop browsers.
 
-## Screenshots
-### World map
-<p>
-  <img src="images/map-example.png" width="80%">
+## Gameplay preview
+<p align="center">
+  <img src="assets/mathsgame.gif" width="600"/>
+  <br>
+  <em>Gameplay loop.</em>
 </p>
 
-### Multiplication challenge
-<p>
-  <img src="images/first-challenge.png" height="300">
+<p align="center">
+  <img src="assets/map-example.png" width="600"/>
+  <br>
+  <em>World map.</em>
 </p>
 
-### Final challenge
-<p>
-  <img src="images/final-challenge.png" height="300">
+<p align="center">
+  <img src="assets/first-challenge.png" height="300"/>
+  <br>
+  <em>First challenge.</em>
+</p>
+
+<p align="center">
+  <img src="assets/final-challenge.png" height="300"/>
+  <br>
+  <em>Final challenge with timer.</em>
 </p>
 
 ## Game systems
@@ -49,7 +58,7 @@ Currently optimized for desktop/laptop browsers.
   - programming and debugging support
 - [SweetAlert2](https://sweetalert2.github.io/)
 
-## Theory and motivation
+## Educational design
 Spelifiering - Multiplikation på mellanstadiet
 
 ### Inledning och styrdokument
