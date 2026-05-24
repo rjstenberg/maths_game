@@ -47,7 +47,12 @@ Currently optimized for desktop/laptop browsers.
 - ChatGPT
   - background image generation
   - programming and debugging support
+ 
+## Technical details
+- HTML / CSS / JavaScript
 - [SweetAlert2](https://sweetalert2.github.io/)
+- LocalStorage-based progression system
+- Responsive browser-based UI
 
 ## Theory and motivation
 Spelifiering - Multiplikation på mellanstadiet
