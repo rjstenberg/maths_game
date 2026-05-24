@@ -6,23 +6,29 @@ feedback, autonomy and motivation.
 Created by Rebecca Stenberg.
 
 Originally developed as a theoretical gamification concept for the course
-"Datorspel och lärande I" at Umeå Universitet, and later implemented as a
-fully playable browser game independently.
+"Datorspel och lärande I" at Umeå Universitet, and later implemented independently as a
+fully playable browser game.
 
 ## Play it here
-- [rjstenberg.github.io/maths_game/](https://rjstenberg.github.io/maths_game/)
+[rjstenberg.github.io/maths_game/](https://rjstenberg.github.io/maths_game/)
 
 Currently optimized for desktop/laptop browsers.
 
 ## Screenshots
 ### World map
-![World map](images/map-example.png)
+<p>
+  <img src="images/map-example.png" width="80%">
+</p>
 
 ### Multiplication challenge
-![First challenge](images/first-challenge.png)
+<p>
+  <img src="images/first-challenge.png" height="300">
+</p>
 
 ### Final challenge
-![Final challenge](images/final-challenge.png)
+<p>
+  <img src="images/final-challenge.png" height="300">
+</p>
 
 ## Game systems
 - Level progression based on multiplication tables 3–9
