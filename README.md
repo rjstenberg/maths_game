@@ -1,4 +1,4 @@
-# Maths Game
+# Multiplication Adventure Game
 A browser-based educational game designed to support multiplication practice
 for middle school students through gamification principles such as progression,
 feedback, autonomy and motivation.
