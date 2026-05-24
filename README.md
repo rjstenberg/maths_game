@@ -18,25 +18,25 @@ Currently optimized for desktop/laptop browsers.
 <p align="center">
   <img src="assets/mathsgame.gif" width="600"/>
   <br>
-  <em>Gameplay loop.</em>
+  <em>Level progression and final boss challenge.</em>
 </p>
 
 <p align="center">
   <img src="assets/map-example.png" width="600"/>
   <br>
-  <em>World map.</em>
+  <em>Interactive world map with unlockable multiplication levels.</em>
 </p>
 
 <p align="center">
   <img src="assets/first-challenge.png" height="300"/>
   <br>
-  <em>First challenge.</em>
+  <em>First multiplication challenge.</em>
 </p>
 
 <p align="center">
   <img src="assets/final-challenge.png" height="300"/>
   <br>
-  <em>Final challenge with timer.</em>
+  <em>Final timed challenge combining all multiplication tables.</em>
 </p>
 
 ## Game Systems
