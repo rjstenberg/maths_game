@@ -16,10 +16,10 @@ Currently optimized for desktop/laptop browsers.
 
 ## Screenshots
 ### World map
-![World map](images/world-map.png)
+![World map](images/map-example.png)
 
 ### Multiplication challenge
-![Gameplay](images/gameplay.png)
+![First challenge](images/first-challenge.png)
 
 ### Final challenge
 ![Final challenge](images/final-challenge.png)
