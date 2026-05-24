@@ -41,9 +41,9 @@ Currently optimized for desktop/laptop browsers.
 
 ## Inspiration and tools
 - Inspired by an original concept from teacher Mathias Andersson for a
-  gamified multiplication game based on the structure of Super Mario Bros.
+  gamified multiplication game based on the structure of Super Mario Bros
 - Classroom testing, pedagogical feedback and development input were provided
-  by Mathias Andersson and Sophie throughout the project.
+  by Mathias Andersson and Sophie throughout the project
 - ChatGPT
   - background image generation
   - programming and debugging support
