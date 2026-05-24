@@ -57,7 +57,7 @@ Currently optimized for desktop/laptop browsers.
 ## Inspiration
 - Based on an original gamification idea by Mathias Andersson
 - Pedagogical input, discussions and classroom feedback provided by teachers Sophie Hansus and Mathias Andersson
-- ChatGPT was used for background image generation, programming support and debugging
+- ChatGPT was used for background and favicon image generation, programming support and debugging
 
 ## Educational design
 Spelifiering - Multiplikation på mellanstadiet
