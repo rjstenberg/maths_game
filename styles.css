@@ -278,7 +278,6 @@ body {
 ==================== */
 
 @media (max-width: 600px) {
-
   .map-scroll {
     width: 100%;
     overflow-x: auto;
@@ -287,7 +286,7 @@ body {
   }
 
   .map-container {
-    width: 200%;
+    width: 200vw;
     max-width: none;
   }
 }
