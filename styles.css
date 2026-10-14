@@ -272,3 +272,22 @@ body {
   font-weight: bold;
   cursor: pointer;
 }
+
+/* ====================
+   Scrollable Mobile Map
+==================== */
+
+@media (max-width: 600px) {
+
+  .map-scroll {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .map-container {
+    width: 170%;
+    max-width: none;
+  }
+}

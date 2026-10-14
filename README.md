@@ -14,6 +14,10 @@ fully playable browser game.
 
 Currently optimized for desktop/laptop browsers.
 
+## Ongoing improvements
+- Improving usability on mobile devices
+- Expanding the game to include addition, subtraction and division
+
 ## Gameplay preview
 <p align="center">
   <img src="assets/mathsgame.gif" width="600"/>
