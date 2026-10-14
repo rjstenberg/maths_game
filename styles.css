@@ -161,10 +161,38 @@ body {
    Controls
 ==================== */
 
-.reset-button {
+/* ====================
+   Developer Controls
+==================== */
+
+.dev-controls {
   position: fixed;
   right: 10px;
   bottom: 10px;
+  display: flex;
+  gap: 10px;
+  z-index: 100;
+}
+
+.reset-button,
+.cheat-button {
+  position: static;
+  min-height: 44px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .dev-controls {
+    position: static;
+    justify-content: center;
+    margin: 20px auto;
+  }
+
+  .reset-button,
+  .cheat-button {
+    margin: 0;
+  }
 }
 
 /* ====================
@@ -213,12 +241,6 @@ body {
     font-size: 1.5rem;
   }
 
-  /* Move reset button below the map */
-  .reset-button {
-    position: static;
-    display: block;
-    margin: 20px auto;
-  }
 }
 
 /* ====================
@@ -234,4 +256,19 @@ body {
 
 .quiz-input {
   box-sizing: border-box;
+}
+
+/* ====================
+   Cheat Button
+==================== */
+
+.cheat-button {
+  min-height: 44px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #555;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
 }

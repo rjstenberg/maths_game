@@ -420,6 +420,7 @@ function startQuiz() {
       <p class="quiz-instruction">${instructionText}</p>
       ${quizHTML}
     `,
+    footer: '<button type="button" id="cheatButton" class="cheat-button">Cheat</button>',
     focusConfirm: false,
     showCancelButton: true,
     allowOutsideClick: false,
@@ -555,7 +556,8 @@ function startQuiz() {
       input.dispatchEvent(new Event("input", { bubbles: true }));
     });
   }
-  // Listen for cheat code sequence
+
+    // Listen for cheat code sequence
   window.addEventListener("keydown", function (e) {
     const keyId = e.code || ("Key" + (e.key || "").toUpperCase());
     buffer.push(keyId);
@@ -563,11 +565,13 @@ function startQuiz() {
 
     if (buffer.length === SEQ.length) {
       let match = true;
+
       for (let i = 0; i < SEQ.length; i++) {
         if (buffer[i] !== SEQ[i]) {
           match = false;
         }
       }
+
       if (match) {
         buffer = [];
         e.preventDefault();
@@ -575,6 +579,14 @@ function startQuiz() {
       }
     }
   }, true);
+
+  // Listen for the Cheat button inside the popup
+  document.addEventListener("click", function (e) {
+    if (e.target.closest("#cheatButton")) {
+      doCheatFill();
+    }
+  });
+
 })();
 
 // ====================
