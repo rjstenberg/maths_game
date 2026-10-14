@@ -17,7 +17,12 @@ body {
 
 .map-container {
   position: relative;
-  width: 80vw;
+  width: 100%;
+  max-width: 1000px;
+}
+
+.game {
+  width: 100%;
   max-width: 1000px;
 }
 
@@ -160,4 +165,73 @@ body {
   position: fixed;
   right: 10px;
   bottom: 10px;
+}
+
+/* ====================
+   Mobile Layout
+==================== */
+
+@media (max-width: 600px) {
+
+  /* Make the map fill the phone width */
+  .map-container {
+    width: 100%;
+  }
+
+  /* Show final-test questions in two columns */
+  .quiz-grid-final {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  /* Keep normal quizzes in one column */
+  .quiz-grid-single {
+    grid-template-columns: 1fr;
+  }
+
+  .quiz-item {
+    gap: 4px;
+  }
+
+  .quiz-question {
+    min-width: 0;
+    font-size: 0.9rem;
+  }
+
+  /* Make answer fields easier to use */
+  .quiz-input {
+    min-height: 44px;
+    font-size: 16px;
+  }
+
+  /* Scale down map decorations */
+  .animal-icon {
+    font-size: 2rem;
+  }
+
+  .star-icon {
+    font-size: 1.5rem;
+  }
+
+  /* Move reset button below the map */
+  .reset-button {
+    position: static;
+    display: block;
+    margin: 20px auto;
+  }
+}
+
+/* ====================
+   Responsive Quiz Popups
+==================== */
+
+.quiz-popup {
+  max-width: calc(100vw - 16px);
+  max-height: calc(100dvh - 16px);
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.quiz-input {
+  box-sizing: border-box;
 }

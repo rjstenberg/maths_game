@@ -192,7 +192,7 @@ function openAnimalSelector() {
     cancelButtonText: "Avbryt",
     showCancelButton: true,
     allowOutsideClick: false,
-    width: "40%"
+    width: "min(95vw, 650px)"
   }).then(result => {
     if (!result.isConfirmed) return;
     const animalType = document.getElementById("animalSelect").value;
@@ -336,7 +336,10 @@ function buildQuizHTML(currentElement, questions) {
     quizHTML += `
       <div class="quiz-item">
         <label class="quiz-question">${question.q}</label>
-        <input type="text" name="q${index}" data-answer="${question.a}" maxlength="3" class="quiz-input" required>
+        <input type="text" inputmode="numeric" pattern="[0-9]*"
+          autocomplete="off" name="q${index}"
+          data-answer="${question.a}" maxlength="3"
+          class="quiz-input" required>
       </div>
     `;
   });
@@ -423,7 +426,7 @@ function startQuiz() {
     allowEscapeKey: false,
     confirmButtonText: "Rätta",
     cancelButtonText: "Avbryt",
-    width: isFinalLevel ? "60%" : "40%",
+    width: isFinalLevel ? "min(96vw, 850px)" : "min(95vw, 650px)",
     customClass: { popup: "quiz-popup" },
     didOpen: () => {
       if (isFinalLevel) {
@@ -442,7 +445,7 @@ function startQuiz() {
               html: "Tiden är ute.",
               icon: "question",
               confirmButtonText: "OK",
-              width: "60%"
+              width: "min(95vw, 650px)"
             });
           }
         }, 1000);
@@ -516,7 +519,7 @@ function startQuiz() {
       html: `<p>${textBody}</p><hr>${feedbackHTML}`,
       icon: passed ? "success" : "question",
       confirmButtonText: "OK",
-      width: isFinalLevel ? "60%" : "40%",
+      width: isFinalLevel ? "min(96vw, 850px)" : "min(95vw, 650px)",
       allowOutsideClick: false
     }).then(() => {
       if (passed && !isAlreadyDone) completeLevel(currentLevel);
