@@ -175,12 +175,6 @@ body {
 }
 
 .reset-button,
-.cheat-button {
-  position: static;
-  min-height: 44px;
-  padding: 8px 12px;
-  cursor: pointer;
-}
 
 @media (max-width: 600px) {
   .dev-controls {
@@ -190,9 +184,6 @@ body {
   }
 
   .reset-button,
-  .cheat-button {
-    margin: 0;
-  }
 }
 
 /* ====================
@@ -258,20 +249,6 @@ body {
   box-sizing: border-box;
 }
 
-/* ====================
-   Cheat Button
-==================== */
-
-.cheat-button {
-  min-height: 44px;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 6px;
-  background: #555;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-}
 
 /* ====================
    Scrollable Mobile Map

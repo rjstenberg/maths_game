@@ -1,6 +1,8 @@
 // ====================
 // Configuration
 // ====================
+const GAME_MODE = "multiplication";
+
 const LEVEL_CONFIG = [
   { id: "table3", label: "3", top: "15%", left: "25%", state: "open" },
   { id: "table4", label: "4", top: "15%", left: "53%", state: "locked" },
@@ -18,12 +20,35 @@ const FINAL_TEST_DURATION = 3 * 60;
 const FINAL_TEST_PASS_SCORE = 18;
 const NORMAL_LEVEL_PASS_SCORE = 5;
 
+
 const STORAGE_KEYS = {
-  levelProgress: "levelProgress",
-  bonusAnimal: "bonusAnimal",
-  starsPlaced: "starsPlaced",
-  finalTestBestTime: "finalTestBestTime",
+  levelProgress: `${GAME_MODE}_levelProgress`,
+  bonusAnimal: `${GAME_MODE}_bonusAnimal`,
+  starsPlaced: `${GAME_MODE}_starsPlaced`,
+  finalTestBestTime: `${GAME_MODE}_finalTestBestTime`,
 };
+
+
+function migrateLegacyProgress() {
+  if (GAME_MODE !== "multiplication") return;
+
+  const legacyKeys = {
+    levelProgress: "levelProgress",
+    bonusAnimal: "bonusAnimal",
+    starsPlaced: "starsPlaced",
+    finalTestBestTime: "finalTestBestTime",
+  };
+
+  Object.entries(legacyKeys).forEach(([key, oldKey]) => {
+    const newKey = STORAGE_KEYS[key];
+    const savedValue = localStorage.getItem(oldKey);
+
+    if (savedValue !== null && localStorage.getItem(newKey) === null) {
+      localStorage.setItem(newKey, savedValue);
+    }
+  });
+}
+
 const ANIMALS = {
   "Hund": "🐶",
   "Katt": "🐱",
@@ -117,6 +142,7 @@ function shuffleArray(array) {
   }
 }
 
+migrateLegacyProgress();
 loadProgress();
 
 // ====================
@@ -420,7 +446,6 @@ function startQuiz() {
       <p class="quiz-instruction">${instructionText}</p>
       ${quizHTML}
     `,
-    footer: '<button type="button" id="cheatButton" class="cheat-button">Cheat</button>',
     focusConfirm: false,
     showCancelButton: true,
     allowOutsideClick: false,
@@ -580,13 +605,6 @@ function startQuiz() {
     }
   }, true);
 
-  // Listen for the Cheat button inside the popup
-  document.addEventListener("click", function (e) {
-    if (e.target.closest("#cheatButton")) {
-      doCheatFill();
-    }
-  });
-
 })();
 
 // ====================
@@ -606,7 +624,19 @@ levels.forEach((level, idx) => {
 });
 
 const resetProgressButton = document.getElementById("resetProgressButton");
+
 resetProgressButton.addEventListener("click", () => {
   Object.values(STORAGE_KEYS).forEach(key => localStorage.removeItem(key));
+
+  if (GAME_MODE === "multiplication") {
+    [
+      "levelProgress",
+      "bonusAnimal",
+      "starsPlaced",
+      "finalTestBestTime"
+    ].forEach(key => localStorage.removeItem(key));
+  }
+
   location.reload();
 });
+
