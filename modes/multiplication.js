@@ -46,30 +46,27 @@ unlocks: {
     "Fjäril": "🦋"
   },
 
-  getQuestionsByLevel() {
+  
+getQuestionsByLevel() {
+  const questionsByLevel = {};
 
-    const questionsByLevel = [];
+  for (let table = 3; table <= 9; table++) {
+    const levelId = `level${table - 2}`;
+    const levelQuestions = [];
 
-    for (let table = 3; table <= 10; table++) {
-      const levelQuestions = [];
-
-      for (let i = 3; i <= 9; i++) {
-        levelQuestions.push({
-          q: `${table} · ${i} =`,
-          a: String(table * i)
-        });
-      }
-
-      questionsByLevel.push(levelQuestions);
-
-      // Keep indexes aligned with the bonus level
-      if (table === 7) {
-        questionsByLevel.push([...levelQuestions]);
-      }
+    for (let i = 3; i <= 9; i++) {
+      levelQuestions.push({
+        q: `${table} · ${i} =`,
+        a: String(table * i)
+      });
     }
 
-    return questionsByLevel;
-  },
+    questionsByLevel[levelId] = levelQuestions;
+  }
+
+  return questionsByLevel;
+},
+
 
   getFinalTestQuestions() {
     const uniquePairs = new Set();
@@ -88,9 +85,7 @@ unlocks: {
         }
       }
     }
-
-    shuffleArray(allQuestions);
-    return allQuestions.slice(0, 20);
+    return allQuestions;
   }
 };
 

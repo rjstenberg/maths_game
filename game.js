@@ -240,7 +240,9 @@ function placeStarsOnMap() {
 }
 
 function getFinalTestQuestions() {
-  return GAME_CONFIG.getFinalTestQuestions();
+  const questions = GAME_CONFIG.getFinalTestQuestions();
+  shuffleArray(questions);
+  return questions.slice(0, 20);
 }
 
 function celebrateConfetti() {
@@ -359,10 +361,12 @@ function startQuiz() {
   if (isFinalLevel) {
     questions = getFinalTestQuestions();
   } else {
-    questions = questionsByLevel[currentLevel].slice(); // copy to avoid mutation
-  }
+    questions = questionsByLevel[currentElement.id].slice();
 
-  if (RANDOMIZE_QUESTIONS) shuffleArray(questions);
+    if (RANDOMIZE_QUESTIONS) {
+      shuffleArray(questions);
+    }
+  }
 
   const quizHTML = buildQuizHTML(currentElement, questions);
 
