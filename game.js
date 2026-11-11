@@ -2,13 +2,15 @@
 // Configuration
 // ====================
 const GAME_MODE = "multiplication";
+const GAME_CONFIG = MULTIPLICATION_MODE;
 
-const LEVEL_CONFIG = MULTIPLICATION_MODE.levels;
 
-const RANDOMIZE_QUESTIONS = MULTIPLICATION_MODE.settings.randomizeQuestions;
-const FINAL_TEST_DURATION = MULTIPLICATION_MODE.settings.finalTestDuration;
-const FINAL_TEST_PASS_SCORE = MULTIPLICATION_MODE.settings.finalTestPassScore;
-const NORMAL_LEVEL_PASS_SCORE = MULTIPLICATION_MODE.settings.normalLevelPassScore;
+const LEVEL_CONFIG = GAME_CONFIG.levels;
+
+const RANDOMIZE_QUESTIONS = GAME_CONFIG.settings.randomizeQuestions;
+const FINAL_TEST_DURATION = GAME_CONFIG.settings.finalTestDuration;
+const FINAL_TEST_PASS_SCORE = GAME_CONFIG.settings.finalTestPassScore;
+const NORMAL_LEVEL_PASS_SCORE = GAME_CONFIG.settings.normalLevelPassScore;
 
 const STORAGE_KEYS = {
   levelProgress: `${GAME_MODE}_levelProgress`,
@@ -38,7 +40,7 @@ function migrateLegacyProgress() {
   });
 }
 
-const ANIMALS = MULTIPLICATION_MODE.animals;
+const ANIMALS = GAME_CONFIG.animals;
 
 let currentLevel = null;
 
@@ -96,7 +98,7 @@ function loadProgress() {
   }
 }
 
-const questionsByLevel = MULTIPLICATION_MODE.getQuestionsByLevel();
+const questionsByLevel = GAME_CONFIG.getQuestionsByLevel();
 
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -249,7 +251,7 @@ function placeStarsOnMap() {
 }
 
 function getFinalTestQuestions() {
-  return MULTIPLICATION_MODE.getFinalTestQuestions();
+  return GAME_CONFIG.getFinalTestQuestions();
 }
 
 function celebrateConfetti() {
@@ -294,10 +296,14 @@ function getInstructionText(currentElement) {
 function buildQuizHTML(currentElement, questions) {
   const isFinalLevel = currentElement.id === "finalLevel";
 
+  const minutes = Math.floor(FINAL_TEST_DURATION / 60);
+  const seconds = FINAL_TEST_DURATION % 60;
+  const initialTime = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+
   let quizHTML = isFinalLevel
     ? `
       <div class="final-test-timer">
-        Tid kvar: <span id="finalTestTimer">03:00</span>
+        Tid kvar: <span id="finalTestTimer">${initialTime}</span>
       </div>
       <form id="quizForm"><div class="quiz-grid-final">`
     : `<form id="quizForm"><div class="quiz-grid-single">`;
