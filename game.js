@@ -113,38 +113,27 @@ loadProgress();
 // ====================
 // Level progression
 // ====================
+
 function completeLevel(idx) {
   const level = levels[idx];
+
   level.classList.remove("open");
   level.classList.add("done");
 
-  const next = levels[idx + 1];
+  const levelsToUnlock = GAME_CONFIG.unlocks[level.id] || [];
 
-  // Special unlock rule for table 4
-  if (level.id === "table4") {
-    document.getElementById("table5").classList.remove("locked");
-    document.getElementById("table5").classList.add("open");
+  levelsToUnlock.forEach(levelId => {
+    const nextLevel = document.getElementById(levelId);
 
-    document.getElementById("table6").classList.remove("locked");
-    document.getElementById("table6").classList.add("open");
-
-    document.getElementById("table7").classList.remove("locked");
-    document.getElementById("table7").classList.add("open");
-  }
-  else if (["table5", "table6"].includes(level.id)) {
-    const bonus = document.getElementById("bonusLevel");
-    if (bonus.classList.contains("locked")) {
-      bonus.classList.remove("locked");
-      bonus.classList.add("open");
+    if (nextLevel && nextLevel.classList.contains("locked")) {
+      nextLevel.classList.remove("locked");
+      nextLevel.classList.add("open");
     }
-  }
-  else if (next) {
-    next.classList.remove("locked");
-    next.classList.add("open");
-  }
+  });
 
   saveProgress();
 }
+
 
 function saveProgress() {
   const progress = Array.from(levels).map(level => {
@@ -277,13 +266,7 @@ function celebrateConfetti() {
 // Quiz flow
 // ====================
 function getQuizTitle(currentElement) {
-  if (currentElement.id === "finalLevel") {
-    return "Finaltest 🏁";
-  }
-
-  return `Tabell ${questionsByLevel[currentLevel][0].q
-    .split("·")[0]
-    .trim()}`;
+    return GAME_CONFIG.levels[currentLevel].title;
 }
 
 function getInstructionText(currentElement) {
