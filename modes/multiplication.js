@@ -12,27 +12,29 @@ const MULTIPLICATION_MODE = {
   },
 
   levels: [
-    { id: "table3", label: "1", title: "Tabell 3", top: "15%", left: "25%", state: "open" },
-    { id: "table4", label: "2", title: "Tabell 4", top: "15%", left: "53%", state: "locked" },
-    { id: "table5", label: "3", title: "Tabell 5", top: "10%", left: "75%", state: "locked" },
-    { id: "table6", label: "4", title: "Tabell 6", top: "36%", left: "67%", state: "locked" },
+    { id: "level1", label: "1", title: "Tabell 3", top: "15%", left: "25%", state: "open" },
+    { id: "level2", label: "2", title: "Tabell 4", top: "15%", left: "53%", state: "locked" },
+    { id: "level3", label: "3", title: "Tabell 5", top: "10%", left: "75%", state: "locked" },
+    { id: "level4", label: "4", title: "Tabell 6", top: "36%", left: "67%", state: "locked" },
     { id: "bonusLevel", label: "⭐", top: "20.2%", left: "88.5%", state: "locked", type: "bonus" },
-    { id: "table7", label: "5", title: "Tabell 7", top: "55%", left: "40%", state: "locked" },
-    { id: "table8", label: "6", title: "Tabell 8", top: "86%", left: "23%", state: "locked" },
-    { id: "table9", label: "7", title: "Tabell 9", top: "86%", left: "50%", state: "locked" },
+    { id: "level5", label: "5", title: "Tabell 7", top: "55%", left: "40%", state: "locked" },
+    { id: "level6", label: "6", title: "Tabell 8", top: "86%", left: "23%", state: "locked" },
+    { id: "level7", label: "7", title: "Tabell 9", top: "86%", left: "50%", state: "locked" },
     { id: "finalLevel", label: "🔥", title: "Finaltest 🏁", top: "84%", left: "76%", state: "locked" }
   ],
 
 
+
 unlocks: {
-  table3: ["table4"],
-  table4: ["table5", "table6", "table7"],
-  table5: ["bonusLevel"],
-  table6: ["bonusLevel"],
-  table7: ["table8"],
-  table8: ["table9"],
-  table9: ["finalLevel"]
+  level1: ["level2"],
+  level2: ["level3", "level4", "level5"],
+  level3: ["bonusLevel"],
+  level4: ["bonusLevel"],
+  level5: ["level6"],
+  level6: ["level7"],
+  level7: ["finalLevel"]
 },
+
 
 
   animals: {
@@ -90,4 +92,8 @@ unlocks: {
     shuffleArray(allQuestions);
     return allQuestions.slice(0, 20);
   }
+};
+
+const GAME_MODES = {
+  multiplication: MULTIPLICATION_MODE
 };

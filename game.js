@@ -2,7 +2,7 @@
 // Configuration
 // ====================
 const GAME_MODE = "multiplication";
-const GAME_CONFIG = MULTIPLICATION_MODE;
+const GAME_CONFIG = GAME_MODES[GAME_MODE];
 
 
 const LEVEL_CONFIG = GAME_CONFIG.levels;
