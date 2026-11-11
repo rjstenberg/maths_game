@@ -192,7 +192,7 @@ function openAnimalSelector() {
     cancelButtonText: "Avbryt",
     showCancelButton: true,
     allowOutsideClick: false,
-    width: "40%"
+    width: "min(95vw, 650px)"
   }).then(result => {
     if (!result.isConfirmed) return;
     const animalType = document.getElementById("animalSelect").value;
@@ -336,7 +336,10 @@ function buildQuizHTML(currentElement, questions) {
     quizHTML += `
       <div class="quiz-item">
         <label class="quiz-question">${question.q}</label>
-        <input type="text" name="q${index}" data-answer="${question.a}" maxlength="3" class="quiz-input" required>
+        <input type="text" inputmode="numeric" pattern="[0-9]*"
+          autocomplete="off" name="q${index}"
+          data-answer="${question.a}" maxlength="3"
+          class="quiz-input" required>
       </div>
     `;
   });
@@ -417,13 +420,14 @@ function startQuiz() {
       <p class="quiz-instruction">${instructionText}</p>
       ${quizHTML}
     `,
+    footer: '<button type="button" id="cheatButton" class="cheat-button">Cheat</button>',
     focusConfirm: false,
     showCancelButton: true,
     allowOutsideClick: false,
     allowEscapeKey: false,
     confirmButtonText: "Rätta",
     cancelButtonText: "Avbryt",
-    width: isFinalLevel ? "60%" : "40%",
+    width: isFinalLevel ? "min(96vw, 850px)" : "min(95vw, 650px)",
     customClass: { popup: "quiz-popup" },
     didOpen: () => {
       if (isFinalLevel) {
@@ -442,7 +446,7 @@ function startQuiz() {
               html: "Tiden är ute.",
               icon: "question",
               confirmButtonText: "OK",
-              width: "60%"
+              width: "min(95vw, 650px)"
             });
           }
         }, 1000);
@@ -516,7 +520,7 @@ function startQuiz() {
       html: `<p>${textBody}</p><hr>${feedbackHTML}`,
       icon: passed ? "success" : "question",
       confirmButtonText: "OK",
-      width: isFinalLevel ? "60%" : "40%",
+      width: isFinalLevel ? "min(96vw, 850px)" : "min(95vw, 650px)",
       allowOutsideClick: false
     }).then(() => {
       if (passed && !isAlreadyDone) completeLevel(currentLevel);
@@ -552,7 +556,8 @@ function startQuiz() {
       input.dispatchEvent(new Event("input", { bubbles: true }));
     });
   }
-  // Listen for cheat code sequence
+
+    // Listen for cheat code sequence
   window.addEventListener("keydown", function (e) {
     const keyId = e.code || ("Key" + (e.key || "").toUpperCase());
     buffer.push(keyId);
@@ -560,11 +565,13 @@ function startQuiz() {
 
     if (buffer.length === SEQ.length) {
       let match = true;
+
       for (let i = 0; i < SEQ.length; i++) {
         if (buffer[i] !== SEQ[i]) {
           match = false;
         }
       }
+
       if (match) {
         buffer = [];
         e.preventDefault();
@@ -572,6 +579,14 @@ function startQuiz() {
       }
     }
   }, true);
+
+  // Listen for the Cheat button inside the popup
+  document.addEventListener("click", function (e) {
+    if (e.target.closest("#cheatButton")) {
+      doCheatFill();
+    }
+  });
+
 })();
 
 // ====================

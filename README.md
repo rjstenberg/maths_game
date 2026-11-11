@@ -12,7 +12,11 @@ fully playable browser game.
 ## Play it here
 [rjstenberg.github.io/maths_game/](https://rjstenberg.github.io/maths_game/)
 
-Currently optimized for desktop/laptop browsers.
+Optimized for desktop/laptop browsers, but also playable on mobile devices.
+
+## Ongoing improvements
+- Improving usability on mobile devices
+- Expanding the game to include addition, subtraction and division
 
 ## Gameplay preview
 <p align="center">

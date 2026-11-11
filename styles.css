@@ -17,7 +17,12 @@ body {
 
 .map-container {
   position: relative;
-  width: 80vw;
+  width: 100%;
+  max-width: 1000px;
+}
+
+.game {
+  width: 100%;
   max-width: 1000px;
 }
 
@@ -156,8 +161,133 @@ body {
    Controls
 ==================== */
 
-.reset-button {
+/* ====================
+   Developer Controls
+==================== */
+
+.dev-controls {
   position: fixed;
   right: 10px;
   bottom: 10px;
+  display: flex;
+  gap: 10px;
+  z-index: 100;
+}
+
+.reset-button,
+.cheat-button {
+  position: static;
+  min-height: 44px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .dev-controls {
+    position: static;
+    justify-content: center;
+    margin: 20px auto;
+  }
+
+  .reset-button,
+  .cheat-button {
+    margin: 0;
+  }
+}
+
+/* ====================
+   Mobile Layout
+==================== */
+
+@media (max-width: 600px) {
+
+  /* Make the map fill the phone width */
+  .map-container {
+    width: 100%;
+  }
+
+  /* Show final-test questions in two columns */
+  .quiz-grid-final {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  /* Keep normal quizzes in one column */
+  .quiz-grid-single {
+    grid-template-columns: 1fr;
+  }
+
+  .quiz-item {
+    gap: 4px;
+  }
+
+  .quiz-question {
+    min-width: 0;
+    font-size: 0.9rem;
+  }
+
+  /* Make answer fields easier to use */
+  .quiz-input {
+    min-height: 44px;
+    font-size: 16px;
+  }
+
+  /* Scale down map decorations */
+  .animal-icon {
+    font-size: 2rem;
+  }
+
+  .star-icon {
+    font-size: 1.5rem;
+  }
+
+}
+
+/* ====================
+   Responsive Quiz Popups
+==================== */
+
+.quiz-popup {
+  max-width: calc(100vw - 16px);
+  max-height: calc(100dvh - 16px);
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.quiz-input {
+  box-sizing: border-box;
+}
+
+/* ====================
+   Cheat Button
+==================== */
+
+.cheat-button {
+  min-height: 44px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #555;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* ====================
+   Scrollable Mobile Map
+==================== */
+
+@media (max-width: 600px) {
+
+  .map-scroll {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .map-container {
+    width: min(200vw, calc(85dvh * 1.4));
+    max-width: none;
+  }
 }
