@@ -12,6 +12,9 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js" defer></script>
   <script src="modes/multiplication.js" defer></script>
+  <script src="modes/addition.js" defer></script>
+  <script src="modes/subtraction.js" defer></script>
+  <script src="modes/division.js" defer></script>
   <script src="progress.js" defer></script>
   <script src="game.js" defer></script>
 
@@ -27,28 +30,24 @@
       <p>Välj ditt äventyr!</p>
 
       <div class="mode-selection">
-        <button class="mode-button addition" disabled>
+        <button class="mode-button addition" data-mode="addition">
           <span class="mode-symbol">+</span>
           <span>Addition</span>
-          <small>🔒 Kommer snart</small>
         </button>
 
-        <button class="mode-button subtraction" disabled>
+        <button class="mode-button subtraction" data-mode="subtraction">
           <span class="mode-symbol">−</span>
           <span>Subtraktion</span>
-          <small>🔒 Kommer snart</small>
         </button>
 
-        <button id="multiplicationButton" class="mode-button multiplication">
+        <button class="mode-button multiplication" data-mode="multiplication">
           <span class="mode-symbol">×</span>
           <span>Multiplikation</span>
-          <small>Spela nu!</small>
         </button>
 
-        <button class="mode-button division" disabled>
+        <button class="mode-button division" data-mode="division">
           <span class="mode-symbol">÷</span>
           <span>Division</span>
-          <small>🔒 Kommer snart</small>
         </button>
       </div>
     </section>

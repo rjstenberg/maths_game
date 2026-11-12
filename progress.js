@@ -87,5 +87,5 @@ resetProgressButton.addEventListener("click", () => {
     ].forEach(key => localStorage.removeItem(key));
   }
 
-  location.reload();
+  switchGameMode(GAME_MODE);
 });

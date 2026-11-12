@@ -88,6 +88,3 @@ getQuestionsByLevel() {
   }
 };
 
-const GAME_MODES = {
-  multiplication: MULTIPLICATION_MODE
-};

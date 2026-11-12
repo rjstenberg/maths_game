@@ -1,20 +1,27 @@
 // ====================
 // Configuration
 // ====================
-const GAME_MODE = "multiplication";
-const GAME_CONFIG = GAME_MODES[GAME_MODE];
+const GAME_MODES = {
+  addition: ADDITION_MODE,
+  subtraction: SUBTRACTION_MODE,
+  multiplication: MULTIPLICATION_MODE,
+  division: DIVISION_MODE
+};
+
+let GAME_MODE = "multiplication";
+let GAME_CONFIG = GAME_MODES[GAME_MODE];
 
 
-const LEVEL_CONFIG = GAME_CONFIG.levels;
+let LEVEL_CONFIG = GAME_CONFIG.levels;
 
-const RANDOMIZE_QUESTIONS = GAME_CONFIG.settings.randomizeQuestions;
-const FINAL_TEST_DURATION = GAME_CONFIG.settings.finalTestDuration;
-const FINAL_TEST_PASS_SCORE = GAME_CONFIG.settings.finalTestPassScore;
-const NORMAL_LEVEL_PASS_SCORE = GAME_CONFIG.settings.normalLevelPassScore;
+let RANDOMIZE_QUESTIONS = GAME_CONFIG.settings.randomizeQuestions;
+let FINAL_TEST_DURATION = GAME_CONFIG.settings.finalTestDuration;
+let FINAL_TEST_PASS_SCORE = GAME_CONFIG.settings.finalTestPassScore;
+let NORMAL_LEVEL_PASS_SCORE = GAME_CONFIG.settings.normalLevelPassScore;
 
-const STORAGE_KEYS = getStorageKeys();
+let STORAGE_KEYS = getStorageKeys();
 
-const ANIMALS = GAME_CONFIG.animals;
+let ANIMALS = GAME_CONFIG.animals;
 
 let currentLevel = null;
 
@@ -23,6 +30,7 @@ let currentLevel = null;
 // ====================
 function renderLevels() {
   const levelContainer = document.getElementById("levels");
+  levelContainer.innerHTML = "";
 
   LEVEL_CONFIG.forEach(level => {
     const levelButton = document.createElement("div");
@@ -45,9 +53,9 @@ function renderLevels() {
 
 renderLevels();
 
-const levels = document.querySelectorAll(".level");
+let levels = document.querySelectorAll(".level");
 
-const questionsByLevel = GAME_CONFIG.getQuestionsByLevel();
+let questionsByLevel = GAME_CONFIG.getQuestionsByLevel();
 
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -58,6 +66,33 @@ function shuffleArray(array) {
 
 migrateLegacyProgress();
 loadProgress();
+
+
+function switchGameMode(mode) {
+  GAME_MODE = mode;
+  GAME_CONFIG = GAME_MODES[mode];
+
+  LEVEL_CONFIG = GAME_CONFIG.levels;
+  RANDOMIZE_QUESTIONS = GAME_CONFIG.settings.randomizeQuestions;
+  FINAL_TEST_DURATION = GAME_CONFIG.settings.finalTestDuration;
+  FINAL_TEST_PASS_SCORE = GAME_CONFIG.settings.finalTestPassScore;
+  NORMAL_LEVEL_PASS_SCORE = GAME_CONFIG.settings.normalLevelPassScore;
+
+  STORAGE_KEYS = getStorageKeys();
+  ANIMALS = GAME_CONFIG.animals;
+
+  currentLevel = null;
+
+  document.querySelectorAll(".animal-icon, .star-icon").forEach(icon => icon.remove());
+
+  renderLevels();
+  levels = document.querySelectorAll(".level");
+  questionsByLevel = GAME_CONFIG.getQuestionsByLevel();
+
+  attachLevelListeners();
+  loadProgress();
+}
+
 
 // ====================
 // Level progression
@@ -200,11 +235,17 @@ function getQuizTitle(currentElement) {
     return GAME_CONFIG.levels[currentLevel].title;
 }
 
+function getRequiredScore(questionCount) {
+  return NORMAL_LEVEL_PASS_SCORE < 1
+    ? Math.ceil(questionCount * NORMAL_LEVEL_PASS_SCORE)
+    : NORMAL_LEVEL_PASS_SCORE;
+}
+
 function getInstructionText(currentElement) {
   if (currentElement.id === "finalLevel") {
     return `Du behöver ${FINAL_TEST_PASS_SCORE} rätt för att klara nivån.`;
   }
-  return `Du behöver ${NORMAL_LEVEL_PASS_SCORE} rätt för att klara nivån.`;
+  return `Du behöver ${getRequiredScore(questionsByLevel[LEVEL_CONFIG[currentLevel].id].length)} rätt för att klara nivån.`;
 }
 
 function buildQuizHTML(currentElement, questions) {
@@ -295,6 +336,8 @@ function startQuiz() {
     if (RANDOMIZE_QUESTIONS) {
       shuffleArray(questions);
     }
+
+    questions = questions.slice(0, 10);
   }
 
   const quizHTML = buildQuizHTML(currentElement, questions);
@@ -358,7 +401,7 @@ function startQuiz() {
 
     const requiredCorrect = isFinalLevel
       ? FINAL_TEST_PASS_SCORE
-      : NORMAL_LEVEL_PASS_SCORE;
+      : getRequiredScore(questions.length);
 
     const passed = correctCount >= requiredCorrect;
 
@@ -476,18 +519,23 @@ function startQuiz() {
 // ====================
 // Event listeners
 // ====================
-levels.forEach((level, idx) => {
-  level.addEventListener("click", () => {
-    if (level.classList.contains("open") || level.classList.contains("done")) {
-      currentLevel = idx;
-      if (level.classList.contains("bonus")) {
-        openAnimalSelector();
-      } else {
-        startQuiz();
+
+function attachLevelListeners() {
+  levels.forEach((level, idx) => {
+    level.addEventListener("click", () => {
+      if (level.classList.contains("open") || level.classList.contains("done")) {
+        currentLevel = idx;
+        if (level.classList.contains("bonus")) {
+          openAnimalSelector();
+        } else {
+          startQuiz();
+        }
       }
-    }
+    });
   });
-});
+}
+
+attachLevelListeners();
 
 
 // ====================
@@ -496,9 +544,13 @@ levels.forEach((level, idx) => {
 const homeScreen = document.getElementById("homeScreen");
 const gameScreen = document.getElementById("gameScreen");
 
-document.getElementById("multiplicationButton").addEventListener("click", () => {
-  homeScreen.hidden = true;
-  gameScreen.hidden = false;
+document.querySelectorAll(".mode-button").forEach(button => {
+  button.addEventListener("click", () => {
+    switchGameMode(button.dataset.mode);
+
+    homeScreen.hidden = true;
+    gameScreen.hidden = false;
+  });
 });
 
 document.getElementById("homeButton").addEventListener("click", () => {
