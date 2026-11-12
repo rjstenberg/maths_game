@@ -156,7 +156,7 @@ function placeAnimalOnMap(type, save = true) {
   const oldIcon = document.querySelector(".animal-icon");
   if (oldIcon) oldIcon.remove();
 
-  const pos = { top: "43.5%", left: "12%" };
+  const pos = GAME_CONFIG.animalPosition;
 
   const icon = document.createElement("div");
   icon.classList.add("animal-icon");
@@ -467,7 +467,7 @@ function startQuiz() {
 
 
 // ====================
-// Dev helper (Cheat: fill answers when a key combo is pressed)
+// Developer testing shortcut
 // ====================
 (function () {
   const SEQ = ["ArrowLeft", "ArrowRight", "ArrowRight", "ArrowLeft"];

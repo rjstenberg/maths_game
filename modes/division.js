@@ -9,13 +9,13 @@ const DIVISION_MODE = {
   },
 
   levels: [
-    { id: "level1", label: "1", title: "Dela med 2", top: "15%", left: "25%", state: "open" },
-    { id: "level2", label: "2", title: "Dela med 3", top: "15%", left: "53%", state: "locked" },
-    { id: "level3", label: "3", title: "Dela med 4", top: "10%", left: "75%", state: "locked" },
-    { id: "level4", label: "4", title: "Dela med 5", top: "36%", left: "67%", state: "locked" },
-    { id: "bonusLevel", label: "⭐", top: "20.2%", left: "88.5%", state: "locked", type: "bonus" },
-    { id: "level5", label: "5", title: "Dela med 6 och 7", top: "55%", left: "40%", state: "locked" },
-    { id: "level6", label: "6", title: "Dela med 8 och 9", top: "86%", left: "23%", state: "locked" },
+    { id: "level1", label: "1", title: "Dela med 2", top: "15%", left: "27%", state: "open" },
+    { id: "level2", label: "2", title: "Dela med 3", top: "18%", left: "56%", state: "locked" },
+    { id: "level3", label: "3", title: "Dela med 4", top: "12%", left: "75%", state: "locked" },
+    { id: "level4", label: "4", title: "Dela med 5", top: "39%", left: "67%", state: "locked" },
+    { id: "bonusLevel", label: "⭐", top: "27%", left: "89%", state: "locked", type: "bonus" },
+    { id: "level5", label: "5", title: "Dela med 6 och 7", top: "57%", left: "36%", state: "locked" },
+    { id: "level6", label: "6", title: "Dela med 8 och 9", top: "82%", left: "28%", state: "locked" },
     { id: "level7", label: "7", title: "Blandad division", top: "86%", left: "50%", state: "locked" },
     { id: "finalLevel", label: "🔥", title: "Mästarprovet 🏁", top: "84%", left: "76%", state: "locked" }
   ],
@@ -38,6 +38,8 @@ const DIVISION_MODE = {
     "Krokodil": "🐊",
     "Enhörning": "🦄"
   },
+
+  animalPosition: { top: "43%", left: "18%" },
 
   getQuestionsByLevel() {
     const questionsByLevel = {};

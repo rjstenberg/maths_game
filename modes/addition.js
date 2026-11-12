@@ -10,13 +10,13 @@ const ADDITION_MODE = {
 
   levels: [
     { id: "level1", label: "1", title: "Två steg framåt", top: "15%", left: "25%", state: "open" },
-    { id: "level2", label: "2", title: "Dubbelt", top: "15%", left: "53%", state: "locked" },
+    { id: "level2", label: "2", title: "Dubbelt", top: "15%", left: "55%", state: "locked" },
     { id: "level3", label: "3", title: "Nästan dubbelt", top: "10%", left: "75%", state: "locked" },
-    { id: "level4", label: "4", title: "Över tio", top: "36%", left: "67%", state: "locked" },
-    { id: "bonusLevel", label: "⭐", top: "20.2%", left: "88.5%", state: "locked", type: "bonus" },
+    { id: "level4", label: "4", title: "Över tio", top: "39%", left: "67%", state: "locked" },
+    { id: "bonusLevel", label: "⭐", top: "26%", left: "88.5%", state: "locked", type: "bonus" },
     { id: "level5", label: "5", title: "Tiokompisen", top: "55%", left: "40%", state: "locked" },
-    { id: "level6", label: "6", title: "Allt inom 10", top: "86%", left: "23%", state: "locked" },
-    { id: "level7", label: "7", title: "Allt inom 20", top: "86%", left: "50%", state: "locked" },
+    { id: "level6", label: "6", title: "Allt inom 10", top: "81%", left: "26%", state: "locked" },
+    { id: "level7", label: "7", title: "Allt inom 20", top: "88%", left: "40%", state: "locked" },
     { id: "finalLevel", label: "🔥", title: "Mästarprovet 🏁", top: "84%", left: "76%", state: "locked" }
   ],
 
@@ -38,6 +38,8 @@ const ADDITION_MODE = {
     "Varg": "🐺",
     "Ren": "🦌"
   },
+
+  animalPosition: { top: "43.5%", left: "19%" },
 
   getQuestionsByLevel() {
     const questionsByLevel = {};

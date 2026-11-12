@@ -45,6 +45,7 @@ unlocks: {
     "Fjäril": "🦋"
   },
 
+animalPosition: { top: "43.5%", left: "12%" },
   
 getQuestionsByLevel() {
   const questionsByLevel = {};
