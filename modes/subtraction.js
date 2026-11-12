@@ -1,5 +1,6 @@
 
 const SUBTRACTION_MODE = {
+  map: "assets/map-subtraction.png",
   settings: {
     randomizeQuestions: true,
     finalTestDuration: 3 * 60,

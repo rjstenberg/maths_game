@@ -11,7 +11,6 @@ const GAME_MODES = {
 let GAME_MODE = "multiplication";
 let GAME_CONFIG = GAME_MODES[GAME_MODE];
 
-
 let LEVEL_CONFIG = GAME_CONFIG.levels;
 
 let RANDOMIZE_QUESTIONS = GAME_CONFIG.settings.randomizeQuestions;
@@ -71,6 +70,8 @@ loadProgress();
 function switchGameMode(mode) {
   GAME_MODE = mode;
   GAME_CONFIG = GAME_MODES[mode];
+
+  document.getElementById("gameMap").src = GAME_CONFIG.map;
 
   LEVEL_CONFIG = GAME_CONFIG.levels;
   RANDOMIZE_QUESTIONS = GAME_CONFIG.settings.randomizeQuestions;

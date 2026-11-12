@@ -1,5 +1,6 @@
 
 const ADDITION_MODE = {
+  map: "assets/map-addition.png",
   settings: {
     randomizeQuestions: true,
     finalTestDuration: 3 * 60,

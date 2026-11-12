@@ -1,5 +1,6 @@
 
 const DIVISION_MODE = {
+  map: "assets/map-division.png",
   settings: {
     randomizeQuestions: true,
     finalTestDuration: 3 * 60,
