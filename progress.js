@@ -70,7 +70,7 @@ resetProgressButton.addEventListener("click", async () => {
     confirmButtonText: "Ja, radera",
     cancelButtonText: "Avbryt",
     confirmButtonColor: "#d33",
-    reverseButtons: true
+    reverseButtons: false
   });
 
   if (!result.isConfirmed) return;

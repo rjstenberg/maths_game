@@ -91,8 +91,29 @@ function switchGameMode(mode) {
 
   attachLevelListeners();
   loadProgress();
+  updateObstacle();
 }
 
+// ====================
+// Map obstacle
+// ====================
+function updateObstacle() {
+  document.querySelector(".obstacle-icon")?.remove();
+
+  if (!GAME_CONFIG.obstacle) return;
+
+  const level4 = document.getElementById("level4");
+
+  if (level4?.classList.contains("done")) return;
+
+  const obstacle = document.createElement("div");
+  obstacle.classList.add("obstacle-icon");
+  obstacle.textContent = GAME_CONFIG.obstacle.emoji;
+  obstacle.style.top = GAME_CONFIG.obstacle.top;
+  obstacle.style.left = GAME_CONFIG.obstacle.left;
+
+  document.querySelector(".map-container").appendChild(obstacle);
+}
 
 // ====================
 // Level progression
@@ -116,6 +137,7 @@ function completeLevel(idx) {
   });
 
   saveProgress();
+  updateObstacle();
 }
 
 // ====================
@@ -538,6 +560,7 @@ function attachLevelListeners() {
 }
 
 attachLevelListeners();
+updateObstacle();
 
 
 // ====================
