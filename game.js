@@ -489,3 +489,19 @@ levels.forEach((level, idx) => {
   });
 });
 
+
+// ====================
+// Screen navigation
+// ====================
+const homeScreen = document.getElementById("homeScreen");
+const gameScreen = document.getElementById("gameScreen");
+
+document.getElementById("multiplicationButton").addEventListener("click", () => {
+  homeScreen.hidden = true;
+  gameScreen.hidden = false;
+});
+
+document.getElementById("homeButton").addEventListener("click", () => {
+  gameScreen.hidden = true;
+  homeScreen.hidden = false;
+});

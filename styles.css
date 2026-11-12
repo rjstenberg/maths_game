@@ -268,3 +268,129 @@ body {
     max-width: none;
   }
 }
+
+
+/* ====================
+   Home screen
+   ==================== */
+
+.home-screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 24px;
+  text-align: center;
+}
+
+.home-screen h1 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+}
+
+.home-screen p {
+  margin: 0 0 24px;
+  font-size: 1.2rem;
+}
+
+.mode-selection {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  width: 100%;
+  max-width: 850px;
+}
+
+.mode-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 160px;
+  padding: 20px 12px;
+  border: none;
+  border-radius: 18px;
+  font: inherit;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #25313a;
+}
+
+.mode-symbol {
+  font-size: 3rem;
+  line-height: 1;
+}
+
+.mode-button small {
+  font-size: 0.8rem;
+  font-weight: normal;
+}
+
+.mode-button.addition {
+  background-color: #E68A80;
+}
+
+.mode-button.subtraction {
+  background-color: #79B8E6;
+}
+
+.mode-button.multiplication {
+  background-color: #88C97A;
+}
+
+.mode-button.division {
+  background-color: #E9C65C;
+}
+
+.mode-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.mode-button:not(:disabled) {
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.mode-button:not(:disabled):hover {
+  transform: translateY(-4px);
+}
+
+.mode-button:not(:disabled):focus-visible {
+  outline: 3px solid #25313a;
+  outline-offset: 4px;
+}
+
+/* Keep hidden screens hidden */
+[hidden] {
+  display: none !important;
+}
+
+/* Home button on the map */
+.home-button {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+  padding: 0;
+  border: none;
+  border-radius: 12px;
+  background: #E5E7EB;
+  color: #25313a;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+@media (min-width: 768px) {
+  .mode-selection {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}

@@ -17,19 +17,68 @@
 
 </head>
 
+
 <body>
   <main class="game">
-  <div class="map-scroll">
-    <section class="map-container" aria-label="Spelkarta">
-      <img src="assets/map.png" alt="Spelkarta">
-      <div id="levels"></div>
+
+    <!-- Home screen -->
+    <section id="homeScreen" class="home-screen">
+      <h1>Matteäventyret</h1>
+      <p>Välj ditt äventyr!</p>
+
+      <div class="mode-selection">
+        <button class="mode-button addition" disabled>
+          <span class="mode-symbol">+</span>
+          <span>Addition</span>
+          <small>🔒 Kommer snart</small>
+        </button>
+
+        <button class="mode-button subtraction" disabled>
+          <span class="mode-symbol">−</span>
+          <span>Subtraktion</span>
+          <small>🔒 Kommer snart</small>
+        </button>
+
+        <button id="multiplicationButton" class="mode-button multiplication">
+          <span class="mode-symbol">×</span>
+          <span>Multiplikation</span>
+          <small>Spela nu!</small>
+        </button>
+
+        <button class="mode-button division" disabled>
+          <span class="mode-symbol">÷</span>
+          <span>Division</span>
+          <small>🔒 Kommer snart</small>
+        </button>
+      </div>
     </section>
-  </div>
 
-<div class="dev-controls">
-  <button id="resetProgressButton" class="reset-button">Reset Progress</button>
-</div>
+    <!-- Game screen -->
+    <section id="gameScreen" class="game-screen" hidden>
+      <button id="homeButton" class="home-button" aria-label="Till startsidan" title="Till startsidan">
+        <svg width="24" height="24" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round"
+             aria-hidden="true">
+          <path d="m3 10 9-7 9 7"></path>
+          <path d="M5 9v12h14V9"></path>
+          <path d="M9 21v-7h6v7"></path>
+        </svg>
+      </button>
 
-</main>
+      <div class="map-scroll">
+        <section class="map-container" aria-label="Spelkarta">
+          <img src="assets/map.png" alt="Spelkarta">
+          <div id="levels"></div>
+        </section>
+      </div>
+
+      <div class="dev-controls">
+        <button id="resetProgressButton" class="reset-button">Reset Progress</button>
+      </div>
+    </section>
+
+  </main>
 </body>
+
 </html>
