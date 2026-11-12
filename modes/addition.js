@@ -9,13 +9,13 @@ const ADDITION_MODE = {
   },
 
   levels: [
-    { id: "level1", label: "1", title: "Ett steg bakåt", top: "18%", left: "25%", state: "open" },
-    { id: "level2", label: "2", title: "Två steg bakåt", top: "17%", left: "56%", state: "locked" },
-    { id: "level3", label: "3", title: "Från tio", top: "12%", left: "75%", state: "locked" },
-    { id: "level4", label: "4", title: "Hälften", top: "41%", left: "67%", state: "locked" },
+    { id: "level1", label: "1", title: "Två steg framåt", top: "18%", left: "25%", state: "open" },
+    { id: "level2", label: "2", title: "Dubbelt", top: "17%", left: "56%", state: "locked" },
+    { id: "level3", label: "3", title: "Nästan dubbelt", top: "12%", left: "75%", state: "locked" },
+    { id: "level4", label: "4", title: "Över tio", top: "41%", left: "67%", state: "locked" },
     { id: "bonusLevel", label: "⭐", top: "26%", left: "91%", state: "locked", type: "bonus" },
-    { id: "level5", label: "5", title: "Allt inom 10", top: "56%", left: "37%", state: "locked" },
-    { id: "level6", label: "6", title: "Förbi tio", top: "86%", left: "26%", state: "locked" },
+    { id: "level5", label: "5", title: "Tiokompisen", top: "56%", left: "37%", state: "locked" },
+    { id: "level6", label: "6", title: "Allt inom 10", top: "86%", left: "26%", state: "locked" },
     { id: "level7", label: "7", title: "Allt inom 20", top: "88%", left: "44%", state: "locked" },
     { id: "finalLevel", label: "🔥", title: "Mästarprovet 🏁", top: "84%", left: "76%", state: "locked" }
   ],
