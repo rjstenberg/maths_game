@@ -157,6 +157,57 @@ body {
   }
 }
 
+.animal-icon.bouncing {
+  animation: animalBounce 0.5s ease-in-out 4;
+}
+
+@keyframes animalBounce {
+  0%, 100% {
+    transform: translate(-50%, -50%);
+  }
+
+  50% {
+    transform: translate(-50%, -70%);
+  }
+}
+
+.animal-icon.mirrored.bouncing {
+  animation-name: animalBounceMirrored;
+}
+
+@keyframes animalBounceMirrored {
+  0%, 100% {
+    transform: translate(-50%, -50%) scaleX(-1);
+  }
+
+  50% {
+    transform: translate(-50%, -80%) scaleX(-1) scale(1.05);
+  }
+}
+
+.animal-icon.mirrored {
+  transform: translate(-50%, -50%) scaleX(-1);
+}
+
+.reunion-heart {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-size: 2rem;
+  z-index: 51;
+  pointer-events: none;
+  animation: heartPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes heartPulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+}
+
 /* ====================
    Mobile Layout
 ==================== */

@@ -39,7 +39,16 @@ const DIVISION_MODE = {
     "Enhörning": "🦄"
   },
 
-  animalPosition: { top: "43%", left: "18%" },
+  mirroredAnimals: ["Orm", "Elefant", "Krokodil", "Enhörning"],
+
+
+  animalPosition: { top: "43%", left: "16%" },
+
+  reunionPosition: {
+   duplicate: { top: "84%", left: "76%" },
+   destination: { top: "40%", left: "26%" },
+   heart: { top: "32%", left: "20.5%" }
+  },
 
   getQuestionsByLevel() {
     const questionsByLevel = {};

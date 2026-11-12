@@ -21,11 +21,27 @@ function loadProgress() {
   });
   const savedAnimal = localStorage.getItem(STORAGE_KEYS.bonusAnimal);
   if (savedAnimal) {
-    placeAnimalOnMap(savedAnimal);
+    placeAnimalOnMap(savedAnimal, false);
     const bonusLevel = document.getElementById("bonusLevel");
     bonusLevel.classList.remove("locked");
     bonusLevel.classList.add("done");
   }
+if (
+  GAME_CONFIG.reunionPosition &&
+  savedAnimal &&
+  document.getElementById("finalLevel")?.classList.contains("done")
+) {
+  placeReunionDuplicate();
+
+  const duplicate = document.querySelector(".reunion-duplicate");
+
+  if (duplicate) {
+    duplicate.style.top = GAME_CONFIG.reunionPosition.destination.top;
+    duplicate.style.left = GAME_CONFIG.reunionPosition.destination.left;
+  }
+
+  placeReunionHeart();
+}
   const starsPlaced = localStorage.getItem(STORAGE_KEYS.starsPlaced);
   if (starsPlaced === "true") {
     placeStarsOnMap();
@@ -40,12 +56,6 @@ function saveProgress() {
     return "locked";
   });
   localStorage.setItem(STORAGE_KEYS.levelProgress, JSON.stringify(progress));
-
-  // Restore saved bonus animal
-  const savedAnimal = localStorage.getItem(STORAGE_KEYS.bonusAnimal);
-  if (savedAnimal && ANIMALS[savedAnimal]) {
-    placeAnimalOnMap(savedAnimal, false);
-  }
 
   // Save stars if they exist
   const starsPlaced = document.querySelectorAll(".star-icon").length > 0;

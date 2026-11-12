@@ -45,7 +45,13 @@ unlocks: {
     "Fjäril": "🦋"
   },
 
-animalPosition: { top: "43.5%", left: "12%" },
+  animalPosition: { top: "43.5%", left: "12%" },
+
+  reunionPosition: {
+    duplicate: { top: "84%", left: "76%" },
+    destination: { top: "45%", left: "19%" },
+    heart: { top: "40%", left: "16%" }
+  },
   
 getQuestionsByLevel() {
   const questionsByLevel = {};

@@ -39,7 +39,16 @@ const SUBTRACTION_MODE = {
     "Bäver": "🦫"
   },
 
-  animalPosition: { top: "43.5%", left: "19%" },
+  mirroredAnimals: ["Igelkott", "Ekorre", "Bäver"],
+
+  animalPosition: { top: "40%", left: "15%" },
+
+  reunionPosition: {
+    duplicate: { top: "84%", left: "76%" },
+    destination: { top: "40%", left: "26%" },
+    heart: { top: "32%", left: "20.5%" }
+  },
+
   obstacle: { emoji: "🪵", top: "35%", left: "52%" },
 
   getQuestionsByLevel() {

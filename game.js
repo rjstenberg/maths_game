@@ -84,6 +84,7 @@ function switchGameMode(mode) {
   currentLevel = null;
 
   document.querySelectorAll(".animal-icon, .star-icon").forEach(icon => icon.remove());
+  document.querySelector(".reunion-heart")?.remove();
 
   renderLevels();
   levels = document.querySelectorAll(".level");
@@ -175,13 +176,23 @@ function openAnimalSelector() {
 
 function placeAnimalOnMap(type, save = true) {
   // Remove any existing animal icon before placing a new one
-  const oldIcon = document.querySelector(".animal-icon");
+  const oldIcon = document.querySelector(".animal-icon:not(.reunion-duplicate)");
   if (oldIcon) oldIcon.remove();
+
+  const reunionComplete =
+    GAME_CONFIG.reunionPosition &&
+    document.getElementById("finalLevel")?.classList.contains("done");
 
   const pos = GAME_CONFIG.animalPosition;
 
   const icon = document.createElement("div");
   icon.classList.add("animal-icon");
+  if (GAME_CONFIG.mirroredAnimals?.includes(type)) {
+    icon.classList.add("mirrored");
+  }
+  if (save && !reunionComplete) {
+    icon.classList.add("bouncing");
+  }
   icon.textContent = ANIMALS[type];
   icon.style.top = pos.top;
   icon.style.left = pos.left;
@@ -190,7 +201,72 @@ function placeAnimalOnMap(type, save = true) {
 
   if (save) {
     localStorage.setItem(STORAGE_KEYS.bonusAnimal, type);
+
+    if (
+      GAME_CONFIG.reunionPosition &&
+      document.getElementById("finalLevel")?.classList.contains("done")
+    ) {
+      placeReunionDuplicate();
+
+      const duplicate = document.querySelector(".reunion-duplicate");
+
+      if (duplicate) {
+        duplicate.style.top = GAME_CONFIG.reunionPosition.destination.top;
+        duplicate.style.left = GAME_CONFIG.reunionPosition.destination.left;
+      }
+    }
   }
+}
+
+function placeReunionDuplicate() {
+  document.querySelector(".reunion-duplicate")?.remove();
+
+  const animalType = localStorage.getItem(STORAGE_KEYS.bonusAnimal);
+  if (!animalType || !GAME_CONFIG.reunionPosition) return;
+
+  const pos = GAME_CONFIG.reunionPosition.duplicate;
+
+  const duplicate = document.createElement("div");
+  duplicate.classList.add("animal-icon", "reunion-duplicate");
+  if (GAME_CONFIG.reunionMirroredAnimals?.includes(animalType)) {
+    duplicate.classList.add("mirrored");
+  }
+  duplicate.textContent = ANIMALS[animalType];
+  duplicate.style.top = pos.top;
+  duplicate.style.left = pos.left;
+
+  document.querySelector(".map-container").appendChild(duplicate);
+}
+
+function moveDuplicateToAnimal() {
+  const duplicate = document.querySelector(".reunion-duplicate");
+  const pos = GAME_CONFIG.reunionPosition?.destination;
+
+  if (!duplicate || !pos) return;
+
+  duplicate.style.transition = "top 3s ease-in-out, left 3s ease-in-out";
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      duplicate.style.top = pos.top;
+      duplicate.style.left = pos.left;
+    });
+  });
+}
+
+function placeReunionHeart() {
+  document.querySelector(".reunion-heart")?.remove();
+
+  const pos = GAME_CONFIG.reunionPosition?.heart;
+  if (!pos) return;
+
+  const heart = document.createElement("div");
+  heart.classList.add("reunion-heart");
+  heart.textContent = "❤️";
+  heart.style.top = pos.top;
+  heart.style.left = pos.left;
+
+  document.querySelector(".map-container").appendChild(heart);
 }
 
 // ====================
@@ -481,7 +557,18 @@ function startQuiz() {
       width: isFinalLevel ? "min(96vw, 850px)" : "min(95vw, 650px)",
       allowOutsideClick: false
     }).then(() => {
-      if (passed && !isAlreadyDone) completeLevel(currentLevel);
+      //if (passed && !isAlreadyDone) {
+        completeLevel(currentLevel);
+
+        if (isFinalLevel) {
+          placeReunionDuplicate();
+          moveDuplicateToAnimal();
+
+            setTimeout(() => {
+              placeReunionHeart();
+            }, 3000);
+        }
+      //}
     });
 
   });

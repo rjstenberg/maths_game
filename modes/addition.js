@@ -40,70 +40,84 @@ const ADDITION_MODE = {
     "Ren": "🦌"
   },
 
-  animalPosition: { top: "45%", left: "17%" },
+  mirroredAnimals: ["Pingvin", "Säl", "Varg", "Ren"],
+  reunionMirroredAnimals: ["Uggla"],
+
+  animalPosition: { top: "45%", left: "15%" },
+
+  reunionPosition: {
+    duplicate: { top: "84%", left: "76%" },
+    destination: { top: "45%", left: "21%" },
+    heart: { top: "40%", left: "18%" }
+  },
+
   obstacle: { emoji: "🧊", top: "35%", left: "52%" },
 
-getQuestionsByLevel() {
-  const questionsByLevel = {};
+  getQuestionsByLevel() {
+    const questionsByLevel = {};
 
-  const makeQuestion = (a, b) => ({
-    q: `${a} + ${b} =`,
-    a: String(a + b)
-  });
-
-  // Level 1: +2, within 10
-  questionsByLevel.level1 = [];
-  for (let a = 0; a <= 8; a++) {
-    questionsByLevel.level1.push(makeQuestion(a, 2));
-  }
-
-  // Level 2: Number bonds to ten
-  questionsByLevel.level2 = [];
-  for (let a = 1; a <= 9; a++) {
-    questionsByLevel.level2.push({
-      q: `${a} + ? = 10`,
-      a: String(10 - a)
+    const makeQuestion = (a, b) => ({
+      q: `${a} + ${b} =`,
+      a: String(a + b)
     });
-  }
 
-  // Level 3: All addition within 10
-  questionsByLevel.level3 = [];
-  for (let a = 1; a <= 10; a++) {
-    for (let b = a; a + b <= 10; b++) {
-      questionsByLevel.level3.push(makeQuestion(a, b));
+    // Level 1: +2, within 10
+    questionsByLevel.level1 = [];
+    for (let a = 0; a <= 8; a++) {
+      questionsByLevel.level1.push(makeQuestion(a, 2));
     }
-  }
 
-  // Level 4: Doubles
-  questionsByLevel.level4 = [];
-  for (let a = 1; a <= 10; a++) {
-    questionsByLevel.level4.push(makeQuestion(a, a));
-  }
+    // Level 2: Number bonds to ten
+    questionsByLevel.level2 = [];
+    for (let a = 1; a <= 9; a++) {
+      questionsByLevel.level2.push({
+        q: `${a} + ? = 10`,
+        a: String(10 - a)
+      });
+    }
 
-  // Level 5: Near doubles
-  questionsByLevel.level5 = [];
-  for (let a = 1; a <= 9; a++) {
-    questionsByLevel.level5.push(makeQuestion(a, a + 1));
-  }
-
-  // Level 6: Crossing ten
-  questionsByLevel.level6 = [];
-  for (let a = 1; a <= 9; a++) {
-    for (let b = a; b <= 9; b++) {
-      if (a + b > 10) {
-        questionsByLevel.level6.push(makeQuestion(a, b));
+    // Level 3: All addition within 10
+    questionsByLevel.level3 = [];
+    for (let a = 1; a <= 10; a++) {
+      for (let b = a; a + b <= 10; b++) {
+        questionsByLevel.level3.push(makeQuestion(a, b));
       }
     }
-  }
 
-  // Level 7: All addition within 20
-  questionsByLevel.level7 = [];
-  for (let a = 1; a <= 20; a++) {
-    for (let b = a; a + b <= 20; b++) {
-      questionsByLevel.level7.push(makeQuestion(a, b));
+    // Level 4: Doubles
+    questionsByLevel.level4 = [];
+    for (let a = 1; a <= 10; a++) {
+      questionsByLevel.level4.push(makeQuestion(a, a));
     }
-  }
 
-  return questionsByLevel;
-}
+    // Level 5: Near doubles
+    questionsByLevel.level5 = [];
+    for (let a = 1; a <= 9; a++) {
+      questionsByLevel.level5.push(makeQuestion(a, a + 1));
+    }
+
+    // Level 6: Crossing ten
+    questionsByLevel.level6 = [];
+    for (let a = 1; a <= 9; a++) {
+      for (let b = a; b <= 9; b++) {
+        if (a + b > 10) {
+          questionsByLevel.level6.push(makeQuestion(a, b));
+        }
+      }
+    }
+
+    // Level 7: All addition within 20
+    questionsByLevel.level7 = [];
+    for (let a = 1; a <= 20; a++) {
+      for (let b = a; a + b <= 20; b++) {
+        questionsByLevel.level7.push(makeQuestion(a, b));
+      }
+    }
+
+    return questionsByLevel;
+  },
+
+  getFinalTestQuestions() {
+    return this.getQuestionsByLevel().level7;
+  }
 };
