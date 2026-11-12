@@ -7,26 +7,6 @@ function getStorageKeys() {
   };
 }
 
-function migrateLegacyProgress() {
-  if (GAME_MODE !== "multiplication") return;
-
-  const legacyKeys = {
-    levelProgress: "levelProgress",
-    bonusAnimal: "bonusAnimal",
-    starsPlaced: "starsPlaced",
-    finalTestBestTime: "finalTestBestTime",
-  };
-
-  Object.entries(legacyKeys).forEach(([key, oldKey]) => {
-    const newKey = STORAGE_KEYS[key];
-    const savedValue = localStorage.getItem(oldKey);
-
-    if (savedValue !== null && localStorage.getItem(newKey) === null) {
-      localStorage.setItem(newKey, savedValue);
-    }
-  });
-}
-
 // ====================
 // Save system
 // ====================
@@ -72,20 +52,32 @@ function saveProgress() {
   localStorage.setItem(STORAGE_KEYS.starsPlaced, starsPlaced ? "true" : "false");
 }
 
-
 const resetProgressButton = document.getElementById("resetProgressButton");
 
-resetProgressButton.addEventListener("click", () => {
+resetProgressButton.addEventListener("click", async () => {
+  const modeNames = {
+    addition: "addition",
+    subtraction: "subtraktion",
+    multiplication: "multiplikation",
+    division: "division"
+  };
+
+  const result = await Swal.fire({
+    title: "Radera framsteg?",
+    text: `Vill du radera dina framsteg i ${modeNames[GAME_MODE]}? Du kan inte ångra detta.`,
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Ja, radera",
+    cancelButtonText: "Avbryt",
+    confirmButtonColor: "#d33",
+    reverseButtons: true
+  });
+
+  if (!result.isConfirmed) return;
+
+  // Delete progress for the selected operation only
   Object.values(STORAGE_KEYS).forEach(key => localStorage.removeItem(key));
 
-  if (GAME_MODE === "multiplication") {
-    [
-      "levelProgress",
-      "bonusAnimal",
-      "starsPlaced",
-      "finalTestBestTime"
-    ].forEach(key => localStorage.removeItem(key));
-  }
-
+  // Refresh the current adventure
   switchGameMode(GAME_MODE);
 });

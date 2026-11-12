@@ -14,10 +14,10 @@ const ADDITION_MODE = {
     { id: "level3", label: "3", title: "Nästan dubbelt", top: "10%", left: "75%", state: "locked" },
     { id: "level4", label: "4", title: "Över tio", top: "36%", left: "67%", state: "locked" },
     { id: "bonusLevel", label: "⭐", top: "20.2%", left: "88.5%", state: "locked", type: "bonus" },
-    { id: "level5", label: "5", title: "Hitta tiokompisen", top: "55%", left: "40%", state: "locked" },
+    { id: "level5", label: "5", title: "Tiokompisen", top: "55%", left: "40%", state: "locked" },
     { id: "level6", label: "6", title: "Allt inom 10", top: "86%", left: "23%", state: "locked" },
     { id: "level7", label: "7", title: "Allt inom 20", top: "86%", left: "50%", state: "locked" },
-    { id: "finalLevel", label: "🔥", title: "Finaltest 🏁", top: "84%", left: "76%", state: "locked" }
+    { id: "finalLevel", label: "🔥", title: "Mästarprovet 🏁", top: "84%", left: "76%", state: "locked" }
   ],
 
   unlocks: {

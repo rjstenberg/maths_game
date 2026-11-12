@@ -19,7 +19,7 @@ const MULTIPLICATION_MODE = {
     { id: "level5", label: "5", title: "Tabell 7", top: "55%", left: "40%", state: "locked" },
     { id: "level6", label: "6", title: "Tabell 8", top: "86%", left: "23%", state: "locked" },
     { id: "level7", label: "7", title: "Tabell 9", top: "86%", left: "50%", state: "locked" },
-    { id: "finalLevel", label: "🔥", title: "Finaltest 🏁", top: "84%", left: "76%", state: "locked" }
+    { id: "finalLevel", label: "🔥", title: "Mästarprovet 🏁", top: "84%", left: "76%", state: "locked" }
   ],
 
 

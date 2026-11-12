@@ -17,7 +17,7 @@ const DIVISION_MODE = {
     { id: "level5", label: "5", title: "Dela med 6 och 7", top: "55%", left: "40%", state: "locked" },
     { id: "level6", label: "6", title: "Dela med 8 och 9", top: "86%", left: "23%", state: "locked" },
     { id: "level7", label: "7", title: "Blandad division", top: "86%", left: "50%", state: "locked" },
-    { id: "finalLevel", label: "🔥", title: "Finaltest 🏁", top: "84%", left: "76%", state: "locked" }
+    { id: "finalLevel", label: "🔥", title: "Mästarprovet 🏁", top: "84%", left: "76%", state: "locked" }
   ],
 
   unlocks: {

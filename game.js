@@ -63,7 +63,6 @@ function shuffleArray(array) {
   }
 }
 
-migrateLegacyProgress();
 loadProgress();
 
 
@@ -242,11 +241,13 @@ function getRequiredScore(questionCount) {
     : NORMAL_LEVEL_PASS_SCORE;
 }
 
-function getInstructionText(currentElement) {
+function getInstructionText(currentElement, questionCount) {
   if (currentElement.id === "finalLevel") {
     return `Du behöver ${FINAL_TEST_PASS_SCORE} rätt för att klara nivån.`;
   }
-  return `Du behöver ${getRequiredScore(questionsByLevel[LEVEL_CONFIG[currentLevel].id].length)} rätt för att klara nivån.`;
+
+  const requiredCorrect = getRequiredScore(questionCount);
+  return `Du behöver ${requiredCorrect} rätt för att klara nivån.`;
 }
 
 function buildQuizHTML(currentElement, questions) {
@@ -344,7 +345,7 @@ function startQuiz() {
   const quizHTML = buildQuizHTML(currentElement, questions);
 
   const titleText = getQuizTitle(currentElement);
-  const instructionText = getInstructionText(currentElement);
+  const instructionText = getInstructionText(currentElement, questions.length);
 
   let timeRemaining = FINAL_TEST_DURATION;
   let timerInterval;
@@ -421,19 +422,19 @@ function startQuiz() {
         const previousBest = localStorage.getItem(STORAGE_KEYS.finalTestBestTime);
 
         if (!previousBest) {
-          textBody = "🎉 Du har klarat hela spelet! Grattis!"; // First pass
+          textBody = "🎉 Du har klarat mästarprovet! Grattis!"; // First pass
           localStorage.setItem(STORAGE_KEYS.finalTestBestTime, timeUsed);
           celebrateConfetti();
         } else {
           const bestTime = parseInt(previousBest);
           if (timeUsed < bestTime) {
-            textBody = `🎉 Du klarade finaltestet igen, ${bestTime - timeUsed} sekunder snabbare än ditt rekord!`;
+            textBody = `🎉 Du klarade mästarprovet igen, ${bestTime - timeUsed} sekunder snabbare än ditt rekord!`;
             localStorage.setItem(STORAGE_KEYS.finalTestBestTime, timeUsed);
             celebrateConfetti();
           } else if (timeUsed === bestTime) {
-            textBody = `🎉 Du klarade finaltestet igen, på samma tid som ditt rekord!`;
+            textBody = `🎉 Du klarade mästarprovet igen, på samma tid som ditt rekord!`;
           } else {
-            textBody = `🎉 Du klarade finaltestet igen!`;
+            textBody = `🎉 Du klarade mästarprovet igen!`;
           }
         }
         placeStarsOnMap();

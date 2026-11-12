@@ -158,35 +158,6 @@ body {
 }
 
 /* ====================
-   Controls
-==================== */
-
-/* ====================
-   Developer Controls
-==================== */
-
-.dev-controls {
-  position: fixed;
-  right: 10px;
-  bottom: 10px;
-  display: flex;
-  gap: 10px;
-  z-index: 100;
-}
-
-.reset-button,
-
-@media (max-width: 600px) {
-  .dev-controls {
-    position: static;
-    justify-content: center;
-    margin: 20px auto;
-  }
-
-  .reset-button,
-}
-
-/* ====================
    Mobile Layout
 ==================== */
 
@@ -295,6 +266,15 @@ body {
   font-size: 1.2rem;
 }
 
+/* Make homepage headings readable on dark backgrounds */
+.home-screen h1,
+.home-screen p {
+  color: #fff4dc;
+  -webkit-text-stroke: 1px #263047;
+  paint-order: stroke fill;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
 .mode-selection {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -369,10 +349,10 @@ body {
   display: none !important;
 }
 
-/* Home button on the map */
-.home-button {
+/* Home and Reset buttons on the map */
+.home-button,
+.reset-button {
   position: fixed;
-  top: 16px;
   left: 16px;
   z-index: 100;
   display: flex;
@@ -387,6 +367,14 @@ body {
   color: #25313a;
   cursor: pointer;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.home-button {
+  top: 16px;
+}
+
+.reset-button {
+  top: 69px;
 }
 
 @media (min-width: 768px) {
