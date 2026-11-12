@@ -1,7 +1,6 @@
 // ====================
 // Question generation, create levels 3–9 (each with 3×3 .. 9×9)
 // ====================
-
 const MULTIPLICATION_MODE = {
 
   settings: {
