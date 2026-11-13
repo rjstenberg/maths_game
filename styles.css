@@ -157,34 +157,6 @@ body {
   }
 }
 
-.animal-icon.bouncing {
-  animation: animalBounce 0.5s ease-in-out 4;
-}
-
-@keyframes animalBounce {
-  0%, 100% {
-    transform: translate(-50%, -50%);
-  }
-
-  50% {
-    transform: translate(-50%, -70%);
-  }
-}
-
-.animal-icon.mirrored.bouncing {
-  animation-name: animalBounceMirrored;
-}
-
-@keyframes animalBounceMirrored {
-  0%, 100% {
-    transform: translate(-50%, -50%) scaleX(-1);
-  }
-
-  50% {
-    transform: translate(-50%, -80%) scaleX(-1) scale(1.05);
-  }
-}
-
 .animal-icon.mirrored {
   transform: translate(-50%, -50%) scaleX(-1);
 }
@@ -207,6 +179,60 @@ body {
     transform: translate(-50%, -50%) scale(1.2);
   }
 }
+
+
+/* Bonus animal arrival animation */
+
+.animal-awaiting-arrival {
+  visibility: hidden;
+}
+
+.animal-arrival-spark {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff7a8;
+  box-shadow:
+    0 0 10px 5px #fff7a8,
+    0 0 25px 12px rgba(255, 220, 80, 0.7);
+  pointer-events: none;
+  z-index: 60;
+}
+
+.animal-icon.animal-arrived {
+  animation: animal-pop 0.4s ease-out;
+}
+
+@keyframes animal-pop {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+  }
+  70% {
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Keep mirrored animals facing the correct direction */
+.animal-icon.mirrored.animal-arrived {
+  animation: animal-pop-mirrored 0.4s ease-out;
+}
+
+@keyframes animal-pop-mirrored {
+  0% {
+    transform: translate(-50%, -50%) scaleX(-1) scale(0);
+  }
+  70% {
+    transform: translate(-50%, -50%) scaleX(-1) scale(1.2);
+  }
+  100% {
+    transform: translate(-50%, -50%) scaleX(-1) scale(1);
+  }
+}
+
 
 /* ====================
    Mobile Layout

@@ -166,16 +166,29 @@ function openAnimalSelector() {
     const animalType = document.getElementById("animalSelect").value;
     if (!animalType) return;
 
-    placeAnimalOnMap(animalType, true);
+    
+    const isFirstSelection =
+      !localStorage.getItem(STORAGE_KEYS.bonusAnimal);
+
+    const animalIcon = placeAnimalOnMap(
+      animalType,
+      true,
+      isFirstSelection
+    );
 
     const bonusLevel = document.getElementById("bonusLevel");
     bonusLevel.classList.remove("open");
     bonusLevel.classList.add("done");
     saveProgress();
+
+    if (isFirstSelection) {
+      animateAnimalArrival(animalIcon);
+    }
   });
 }
 
-function placeAnimalOnMap(type, save = true) {
+
+function placeAnimalOnMap(type, save = true, animate = false) {
   // Remove any existing animal icon before placing a new one
   const oldIcon = document.querySelector(".animal-icon:not(.reunion-duplicate)");
   if (oldIcon) oldIcon.remove();
@@ -188,12 +201,15 @@ function placeAnimalOnMap(type, save = true) {
 
   const icon = document.createElement("div");
   icon.classList.add("animal-icon");
+
   if (GAME_CONFIG.mirroredAnimals?.includes(type)) {
     icon.classList.add("mirrored");
   }
-  if (save && !reunionComplete) {
-    icon.classList.add("bouncing");
+
+  if (animate) {
+    icon.classList.add("animal-awaiting-arrival");
   }
+
   icon.textContent = ANIMALS[type];
   icon.style.top = pos.top;
   icon.style.left = pos.left;
@@ -203,10 +219,7 @@ function placeAnimalOnMap(type, save = true) {
   if (save) {
     localStorage.setItem(STORAGE_KEYS.bonusAnimal, type);
 
-    if (
-      GAME_CONFIG.reunionPosition &&
-      document.getElementById("finalLevel")?.classList.contains("done")
-    ) {
+    if (reunionComplete) {
       placeReunionDuplicate();
 
       const duplicate = document.querySelector(".reunion-duplicate");
@@ -217,7 +230,64 @@ function placeAnimalOnMap(type, save = true) {
       }
     }
   }
+
+  return icon;
 }
+
+
+function animateAnimalArrival(animalIcon) {
+  const map = document.querySelector(".map-container");
+  const bonusLevel = document.getElementById("bonusLevel");
+
+  if (!map || !bonusLevel || !animalIcon) {
+    animalIcon?.classList.remove("animal-awaiting-arrival");
+    return;
+  }
+
+  const mapRect = map.getBoundingClientRect();
+  const bonusRect = bonusLevel.getBoundingClientRect();
+  const animalRect = animalIcon.getBoundingClientRect();
+
+  const startX = bonusRect.left + bonusRect.width / 2 - mapRect.left;
+  const startY = bonusRect.top + bonusRect.height / 2 - mapRect.top;
+
+  const endX = animalRect.left + animalRect.width / 2 - mapRect.left;
+  const endY = animalRect.top + animalRect.height / 2 - mapRect.top;
+
+  const spark = document.createElement("div");
+  spark.classList.add("animal-arrival-spark");
+  spark.style.left = `${startX}px`;
+  spark.style.top = `${startY}px`;
+
+  map.appendChild(spark);
+
+  const animation = spark.animate(
+    [
+      { transform: "translate(-50%, -50%)" },
+      {
+        transform: `translate(calc(-50% + ${endX - startX}px), calc(-50% + ${endY - startY}px))`
+      }
+    ],
+    {
+      duration: 2500,
+      easing: "ease-in-out",
+      fill: "forwards"
+    }
+  );
+
+  animation.finished.then(() => {
+    spark.remove();
+
+    if (animalIcon.isConnected) {
+      animalIcon.classList.remove("animal-awaiting-arrival");
+      animalIcon.classList.add("animal-arrived");
+    }
+  }).catch(() => {
+    spark.remove();
+    animalIcon.classList.remove("animal-awaiting-arrival");
+  });
+}
+
 
 function placeReunionDuplicate() {
   document.querySelector(".reunion-duplicate")?.remove();
