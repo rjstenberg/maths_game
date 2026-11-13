@@ -102,6 +102,7 @@ getQuestionsByLevel() {
     questionsByLevel.level3 = [];
     for (let b = 1; b <= 5; b++) {
       questionsByLevel.level3.push(makeQuestion(5, b));
+      questionsByLevel.level3.push(makeQuestion(5, b));
     }
 
     // Level 4: Inom 5
@@ -115,6 +116,7 @@ getQuestionsByLevel() {
     // Level 5: Hälften (reverse doubles within 10)
     questionsByLevel.level5 = [];
     for (let a = 1; a <= 5; a++) {
+      questionsByLevel.level5.push(makeQuestion(a * 2, a));
       questionsByLevel.level5.push(makeQuestion(a * 2, a));
     }
 

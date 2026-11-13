@@ -84,7 +84,7 @@ function switchGameMode(mode) {
 
   currentLevel = null;
 
-  document.querySelectorAll(".animal-icon, .star-icon").forEach(icon => icon.remove());
+  document.querySelectorAll(".animal-icon").forEach(icon => icon.remove());
   document.querySelector(".reunion-heart")?.remove();
 
   renderLevels();
@@ -295,32 +295,52 @@ function placeReunionDuplicate() {
   const animalType = localStorage.getItem(STORAGE_KEYS.bonusAnimal);
   if (!animalType || !GAME_CONFIG.reunionPosition) return;
 
-  const pos = GAME_CONFIG.reunionPosition.duplicate;
+  const map = document.querySelector(".map-container");
+  const finalLevel = document.getElementById("finalLevel");
+
+  if (!map || !finalLevel) return;
+
+  const mapRect = map.getBoundingClientRect();
+  const finalRect = finalLevel.getBoundingClientRect();
+
+  // Start at the center of the final-test button
+  const startX = finalRect.left + finalRect.width / 2 - mapRect.left;
+  const startY = finalRect.top + finalRect.height / 2 - mapRect.top;
 
   const duplicate = document.createElement("div");
   duplicate.classList.add("animal-icon", "reunion-duplicate");
+
   if (GAME_CONFIG.reunionMirroredAnimals?.includes(animalType)) {
     duplicate.classList.add("mirrored");
   }
-  duplicate.textContent = ANIMALS[animalType];
-  duplicate.style.top = pos.top;
-  duplicate.style.left = pos.left;
 
-  document.querySelector(".map-container").appendChild(duplicate);
+  duplicate.textContent = ANIMALS[animalType];
+  duplicate.style.left = `${startX}px`;
+  duplicate.style.top = `${startY}px`;
+
+  map.appendChild(duplicate);
 }
 
 function moveDuplicateToAnimal() {
   const duplicate = document.querySelector(".reunion-duplicate");
-  const pos = GAME_CONFIG.reunionPosition?.destination;
+  const animal = document.querySelector(".animal-icon:not(.reunion-duplicate)");
+  const map = document.querySelector(".map-container");
 
-  if (!duplicate || !pos) return;
+  if (!duplicate || !animal || !map) return;
+
+  const mapRect = map.getBoundingClientRect();
+  const animalRect = animal.getBoundingClientRect();
+
+  // Destination: center of the original animal
+  const endX = animalRect.left + animalRect.width / 2 - mapRect.left;
+  const endY = animalRect.top + animalRect.height / 2 - mapRect.top;
 
   duplicate.style.transition = "top 3s ease-in-out, left 3s ease-in-out";
 
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-      duplicate.style.top = pos.top;
-      duplicate.style.left = pos.left;
+      duplicate.style.left = `${endX}px`;
+      duplicate.style.top = `${endY}px`;
     });
   });
 }
@@ -343,35 +363,6 @@ function placeReunionHeart() {
 // ====================
 // Final rewards
 // ====================
-function placeStarsOnMap() {
-  const mapContainer = document.querySelector(".map-container");
-  if (!mapContainer) return;
-
-  // Prevent duplicate decorative stars
-  if (document.querySelectorAll(".star-icon").length > 0) {
-    localStorage.setItem(STORAGE_KEYS.starsPlaced, "true");
-    return;
-  }
-
-  const starPositions = [
-    { top: "5%", left: "5%" },
-    { top: "5%", left: "95%" },
-    { top: "95%", left: "5%" },
-    { top: "95%", left: "95%" },
-  ];
-
-  starPositions.forEach(pos => {
-    const star = document.createElement("div");
-    star.classList.add("star-icon");
-    star.textContent = "⭐";
-    star.style.top = pos.top;
-    star.style.left = pos.left;
-    mapContainer.appendChild(star);
-  });
-
-  localStorage.setItem(STORAGE_KEYS.starsPlaced, "true");
-}
-
 function getFinalTestQuestions() {
   const questions = GAME_CONFIG.getFinalTestQuestions();
   shuffleArray(questions);
@@ -606,8 +597,6 @@ function startQuiz() {
             textBody = `🎉 Du klarade mästarprovet igen!`;
           }
         }
-        placeStarsOnMap();
-
       } else if (isAlreadyDone) {
         textBody = "Du klarade nivån igen.";
       } else {

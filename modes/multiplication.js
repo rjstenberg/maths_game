@@ -60,7 +60,7 @@ getQuestionsByLevel() {
     const levelId = `level${table - 2}`;
     const levelQuestions = [];
 
-    for (let i = 3; i <= 9; i++) {
+    for (let i = 1; i <= 9; i++) {
       levelQuestions.push({
         q: `${table} · ${i} =`,
         a: String(table * i)

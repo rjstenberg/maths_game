@@ -111,13 +111,18 @@ getQuestionsByLevel() {
     questionsByLevel.level4 = [];
     for (let a = 1; a <= 5; a++) {
       questionsByLevel.level4.push(makeQuestion(a, a));
+      questionsByLevel.level4.push(makeQuestion(a, a));
     }
 
-    // Level 5: Nästan dubbelt (within 10)
+     // Level 5: Nästan dubbelt (within 10)
     questionsByLevel.level5 = [];
     for (let a = 1; a <= 4; a++) {
       questionsByLevel.level5.push(makeQuestion(a, a + 1));
+      questionsByLevel.level5.push(makeQuestion(a + 1, a));
     }
+
+    questionsByLevel.level5.push(makeQuestion(1, 2));
+    questionsByLevel.level5.push(makeQuestion(2, 3));
 
     // Levels 6 and 7: All addition within 10
     questionsByLevel.level6 = [];

@@ -7,7 +7,6 @@ function getStorageKeys() {
   return {
     levelProgress: `${modeKey}_levelProgress`,
     bonusAnimal: `${modeKey}_bonusAnimal`,
-    starsPlaced: `${modeKey}_starsPlaced`,
     finalTestBestTime: `${modeKey}_finalTestBestTime`,
   };
 }
@@ -47,10 +46,6 @@ if (
 
   placeReunionHeart();
 }
-  const starsPlaced = localStorage.getItem(STORAGE_KEYS.starsPlaced);
-  if (starsPlaced === "true") {
-    placeStarsOnMap();
-  }
 }
 
 
@@ -61,10 +56,6 @@ function saveProgress() {
     return "locked";
   });
   localStorage.setItem(STORAGE_KEYS.levelProgress, JSON.stringify(progress));
-
-  // Save stars if they exist
-  const starsPlaced = document.querySelectorAll(".star-icon").length > 0;
-  localStorage.setItem(STORAGE_KEYS.starsPlaced, starsPlaced ? "true" : "false");
 }
 
 const resetProgressButton = document.getElementById("resetProgressButton");
