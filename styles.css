@@ -386,7 +386,8 @@ body {
   transition: transform 0.15s ease;
 }
 
-.mode-button:not(:disabled):hover {
+button.mode-button:not(:disabled):hover,
+.difficulty-button:hover {
   transform: translateY(-4px);
 }
 
@@ -430,7 +431,7 @@ body {
 
 @media (min-width: 768px) {
   .mode-selection {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -440,4 +441,39 @@ body {
   font-size: clamp(48px, 7vw, 72px);
   z-index: 5;
   pointer-events: none;
+}
+
+/* Difficulty choices inside a mode card */
+.difficulty-options {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.difficulty-button {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 5px;
+  border: none;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.35);
+  color: #333;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.difficulty-symbol {
+  font-size: 1.8rem;
+}
+
+.difficulty-button:hover {
+  background: white;
 }

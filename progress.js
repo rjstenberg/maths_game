@@ -1,9 +1,14 @@
 function getStorageKeys() {
+  const modeKey =
+    GAME_MODE === "addition" || GAME_MODE === "subtraction"
+      ? `${GAME_MODE}_${GAME_DIFFICULTY === "10" ? "10" : "20"}`
+      : GAME_MODE;
+
   return {
-    levelProgress: `${GAME_MODE}_levelProgress`,
-    bonusAnimal: `${GAME_MODE}_bonusAnimal`,
-    starsPlaced: `${GAME_MODE}_starsPlaced`,
-    finalTestBestTime: `${GAME_MODE}_finalTestBestTime`,
+    levelProgress: `${modeKey}_levelProgress`,
+    bonusAnimal: `${modeKey}_bonusAnimal`,
+    starsPlaced: `${modeKey}_starsPlaced`,
+    finalTestBestTime: `${modeKey}_finalTestBestTime`,
   };
 }
 

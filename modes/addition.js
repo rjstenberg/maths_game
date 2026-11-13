@@ -8,7 +8,18 @@ const ADDITION_MODE = {
     normalLevelPassScore: 0.71
   },
 
-  levels: [
+get levels() {
+  const easyTitles = [
+    "Ett steg framåt",
+    "Två steg framåt",
+    "Tiokompisar",
+    "Dubbelt",
+    "Nästan dubbelt",
+    "Inom 10",
+    "Inom 10"
+  ];
+
+  const levels = [
     { id: "level1", label: "1", title: "Två steg framåt", top: "18%", left: "25%", state: "open" },
     { id: "level2", label: "2", title: "Tiokompisar", top: "17%", left: "56%", state: "locked" },
     { id: "level3", label: "3", title: "Inom 10", top: "12%", left: "75%", state: "locked" },
@@ -18,7 +29,19 @@ const ADDITION_MODE = {
     { id: "level6", label: "6", title: "Över tio", top: "86%", left: "26%", state: "locked" },
     { id: "level7", label: "7", title: "Inom 20", top: "88%", left: "44%", state: "locked" },
     { id: "finalLevel", label: "🔥", title: "Mästarprovet 🏁", top: "84%", left: "76%", state: "locked" }
-  ],
+  ];
+
+    if (GAME_DIFFICULTY === "10") {
+      levels.forEach(level => {
+        const levelNumber = Number(level.label);
+        if (levelNumber >= 1 && levelNumber <= 7) {
+          level.title = easyTitles[levelNumber - 1];
+        }
+      });
+    }
+
+    return levels;
+  },
 
   unlocks: {
     level1: ["level2"],
@@ -53,14 +76,60 @@ const ADDITION_MODE = {
 
   obstacle: { emoji: "🧊", top: "35%", left: "52%" },
 
-  getQuestionsByLevel() {
-    const questionsByLevel = {};
+  
+getQuestionsByLevel() {
+  const questionsByLevel = {};
 
-    const makeQuestion = (a, b) => ({
-      q: `${a} + ${b} =`,
-      a: String(a + b)
-    });
+  const makeQuestion = (a, b) => ({
+    q: `${a} + ${b} =`,
+    a: String(a + b)
+  });
 
+  if (GAME_DIFFICULTY === "10") {
+    // Level 1: Ett steg framåt (+1)
+    questionsByLevel.level1 = [];
+    for (let a = 0; a <= 9; a++) {
+      questionsByLevel.level1.push(makeQuestion(a, 1));
+    }
+
+    // Level 2: Två steg framåt (+2)
+    questionsByLevel.level2 = [];
+    for (let a = 0; a <= 8; a++) {
+      questionsByLevel.level2.push(makeQuestion(a, 2));
+    }
+
+    // Level 3: Tiokompisar
+    questionsByLevel.level3 = [];
+    for (let a = 1; a <= 9; a++) {
+      questionsByLevel.level3.push({
+        q: `${a} + ? = 10`,
+        a: String(10 - a)
+      });
+    }
+
+    // Level 4: Dubbelt (within 10)
+    questionsByLevel.level4 = [];
+    for (let a = 1; a <= 5; a++) {
+      questionsByLevel.level4.push(makeQuestion(a, a));
+    }
+
+    // Level 5: Nästan dubbelt (within 10)
+    questionsByLevel.level5 = [];
+    for (let a = 1; a <= 4; a++) {
+      questionsByLevel.level5.push(makeQuestion(a, a + 1));
+    }
+
+    // Levels 6 and 7: All addition within 10
+    questionsByLevel.level6 = [];
+
+    for (let a = 1; a <= 10; a++) {
+      for (let b = a; a + b <= 10; b++) {
+        questionsByLevel.level6.push(makeQuestion(a, b));
+      }
+    }
+
+    questionsByLevel.level7 = [...questionsByLevel.level6];
+  } else {
     // Level 1: +2, within 10
     questionsByLevel.level1 = [];
     for (let a = 0; a <= 8; a++) {
@@ -113,9 +182,11 @@ const ADDITION_MODE = {
         questionsByLevel.level7.push(makeQuestion(a, b));
       }
     }
+  }
 
-    return questionsByLevel;
-  },
+  return questionsByLevel;
+},
+
 
   getFinalTestQuestions() {
     return this.getQuestionsByLevel().level7;

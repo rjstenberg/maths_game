@@ -8,7 +8,19 @@ const SUBTRACTION_MODE = {
     normalLevelPassScore: 0.71
   },
 
- levels: [
+
+get levels() {
+  const easyTitles = [
+    "Ett steg bakåt",
+    "Två steg bakåt",
+    "Från 5",
+    "Inom 5",
+    "Hälften",
+    "Från 10",
+    "Inom 10"
+  ];
+
+  const levels = [
     { id: "level1", label: "1", title: "Ett steg bakåt", top: "15%", left: "25%", state: "open" },
     { id: "level2", label: "2", title: "Två steg bakåt", top: "15%", left: "55%", state: "locked" },
     { id: "level3", label: "3", title: "Från 10", top: "10%", left: "75%", state: "locked" },
@@ -18,7 +30,20 @@ const SUBTRACTION_MODE = {
     { id: "level6", label: "6", title: "Förbi 10", top: "81%", left: "26%", state: "locked" },
     { id: "level7", label: "7", title: "Inom 20", top: "88%", left: "40%", state: "locked" },
     { id: "finalLevel", label: "🔥", title: "Mästarprovet 🏁", top: "84%", left: "76%", state: "locked" }
-  ],
+  ];
+
+  if (GAME_DIFFICULTY === "10") {
+    levels.forEach(level => {
+      const levelNumber = Number(level.label);
+      if (levelNumber >= 1 && levelNumber <= 7) {
+        level.title = easyTitles[levelNumber - 1];
+      }
+    });
+  }
+
+  return levels;
+},
+
 
   unlocks: {
     level1: ["level2"],
@@ -51,14 +76,62 @@ const SUBTRACTION_MODE = {
 
   obstacle: { emoji: "🪵", top: "35%", left: "52%" },
 
-  getQuestionsByLevel() {
-    const questionsByLevel = {};
+  
+getQuestionsByLevel() {
+  const questionsByLevel = {};
 
-    const makeQuestion = (a, b) => ({
-      q: `${a} − ${b} =`,
-      a: String(a - b)
-    });
+  const makeQuestion = (a, b) => ({
+    q: `${a} − ${b} =`,
+    a: String(a - b)
+  });
 
+  if (GAME_DIFFICULTY === "10") {
+    // Level 1: Minus 1
+    questionsByLevel.level1 = [];
+    for (let a = 1; a <= 10; a++) {
+      questionsByLevel.level1.push(makeQuestion(a, 1));
+    }
+
+    // Level 2: Minus 2
+    questionsByLevel.level2 = [];
+    for (let a = 2; a <= 10; a++) {
+      questionsByLevel.level2.push(makeQuestion(a, 2));
+    }
+
+    // Level 3: Från 5
+    questionsByLevel.level3 = [];
+    for (let b = 1; b <= 5; b++) {
+      questionsByLevel.level3.push(makeQuestion(5, b));
+    }
+
+    // Level 4: Inom 5
+    questionsByLevel.level4 = [];
+    for (let a = 1; a <= 5; a++) {
+      for (let b = 1; b <= a; b++) {
+        questionsByLevel.level4.push(makeQuestion(a, b));
+      }
+    }
+
+    // Level 5: Hälften (reverse doubles within 10)
+    questionsByLevel.level5 = [];
+    for (let a = 1; a <= 5; a++) {
+      questionsByLevel.level5.push(makeQuestion(a * 2, a));
+    }
+
+    // Level 6: Från 10
+    questionsByLevel.level6 = [];
+    for (let b = 1; b <= 10; b++) {
+      questionsByLevel.level6.push(makeQuestion(10, b));
+    }
+
+    // Level 7: Inom 10
+    questionsByLevel.level7 = [];
+    for (let a = 1; a <= 10; a++) {
+      for (let b = 1; b <= a; b++) {
+        questionsByLevel.level7.push(makeQuestion(a, b));
+      }
+    }
+  } else {
     // Level 1: Subtract 1, within 10
     questionsByLevel.level1 = [];
     for (let a = 1; a <= 10; a++) {
@@ -108,9 +181,11 @@ const SUBTRACTION_MODE = {
         questionsByLevel.level7.push(makeQuestion(a, b));
       }
     }
+  }
 
-    return questionsByLevel;
-  },
+  return questionsByLevel;
+},
+
 
   getFinalTestQuestions() {
     return this.getQuestionsByLevel().level7;

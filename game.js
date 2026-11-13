@@ -9,6 +9,7 @@ const GAME_MODES = {
 };
 
 let GAME_MODE = "multiplication";
+let GAME_DIFFICULTY = "20";
 let GAME_CONFIG = GAME_MODES[GAME_MODE];
 
 let LEVEL_CONFIG = GAME_CONFIG.levels;
@@ -557,7 +558,7 @@ function startQuiz() {
       width: isFinalLevel ? "min(96vw, 850px)" : "min(95vw, 650px)",
       allowOutsideClick: false
     }).then(() => {
-      //if (passed && !isAlreadyDone) {
+      if (passed && !isAlreadyDone) {
         completeLevel(currentLevel);
 
         if (isFinalLevel) {
@@ -568,7 +569,7 @@ function startQuiz() {
               placeReunionHeart();
             }, 3000);
         }
-      //}
+      }
     });
 
   });
@@ -656,8 +657,10 @@ updateObstacle();
 const homeScreen = document.getElementById("homeScreen");
 const gameScreen = document.getElementById("gameScreen");
 
-document.querySelectorAll(".mode-button").forEach(button => {
+document.querySelectorAll("button[data-mode]").forEach(button => {
   button.addEventListener("click", () => {
+    GAME_DIFFICULTY = button.dataset.difficulty || "20";
+
     switchGameMode(button.dataset.mode);
 
     homeScreen.hidden = true;

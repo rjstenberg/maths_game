@@ -30,27 +30,51 @@
       <p>Välj ditt äventyr!</p>
 
       <div class="mode-selection">
-        <button class="mode-button addition" data-mode="addition">
+        <div class="mode-button addition">
           <span class="mode-symbol">+</span>
           <span>Addition</span>
-        </button>
 
-        <button class="mode-button subtraction" data-mode="subtraction">
+          <div class="difficulty-options">
+            <button class="difficulty-button" data-mode="addition" data-difficulty="10">
+              <span class="difficulty-symbol">❄️</span>
+              <span>Upp till 10</span>
+            </button>
+
+            <button class="difficulty-button" data-mode="addition" data-difficulty="20">
+              <span class="difficulty-symbol">☃️</span>
+              <span>Upp till 20</span>
+            </button>
+          </div>
+        </div>
+
+         <div class="mode-button subtraction">
           <span class="mode-symbol">−</span>
           <span>Subtraktion</span>
-        </button>
 
-        <button class="mode-button multiplication" data-mode="multiplication">
-          <span class="mode-symbol">×</span>
-          <span>Multiplikation</span>
-        </button>
+          <div class="difficulty-options">
+            <button class="difficulty-button" data-mode="subtraction" data-difficulty="10">
+              <span class="difficulty-symbol">🍁</span>
+              <span>Upp till 10</span>
+            </button>
 
-        <button class="mode-button division" data-mode="division">
-          <span class="mode-symbol">÷</span>
-          <span>Division</span>
-        </button>
-      </div>
-    </section>
+            <button class="difficulty-button" data-mode="subtraction" data-difficulty="20">
+              <span class="difficulty-symbol">🍂</span>
+              <span>Upp till 20</span>
+            </button>
+          </div>
+        </div>
+
+          <button class="mode-button multiplication" data-mode="multiplication">
+            <span class="mode-symbol">×</span>
+            <span>Multiplikation</span>
+          </button>
+
+          <button class="mode-button division" data-mode="division">
+            <span class="mode-symbol">÷</span>
+            <span>Division</span>
+          </button>
+        </div>
+      </section>
 
     <!-- Game screen -->
     <section id="gameScreen" class="game-screen" hidden>
